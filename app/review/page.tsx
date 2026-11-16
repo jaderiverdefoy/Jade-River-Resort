@@ -12,7 +12,6 @@ export const metadata = pageMeta({
 export default function ReviewPage() {
   return (
     <section className="relative min-h-svh pt-[68px] md:pt-[80px]">
-      <h2 className="sr-only">Tell us about your stay at Jade River Resort</h2>
       <div className="shell grid gap-12 py-14 md:grid-cols-12 md:gap-8 md:py-24">
         <div className="md:col-span-5">
           <span className="eyebrow text-ink/65" data-reveal>

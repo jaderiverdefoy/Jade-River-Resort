@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Suspense } from "react";
 import PageHeader from "@/components/PageHeader";
 import BookingForm from "@/components/BookingForm";
 import { site } from "@/lib/content";
@@ -47,13 +46,34 @@ export default function ContactPage() {
         }
       />
 
+      <section className="shell pb-6">
+        <div className="grid gap-10 border-b border-line pb-8 md:grid-cols-12 md:gap-14">
+          <p className="eyebrow text-ink/65 md:col-span-3">How a stay starts</p>
+          <div className="max-w-[62ch] space-y-4 text-[0.95rem] leading-relaxed text-ink/75 md:col-span-8">
+            <p>
+              Pick a room, add your dates and the number of guests, and send the
+              message over WhatsApp. A person from the resort team answers — not
+              a portal, not a bot — usually within the hour on working days,
+              with availability and the final rate against the 50% advance.
+            </p>
+            <p>
+              1 · Choose a room. 2 · Send the WhatsApp message below. 3 · We
+              confirm the dates and the advance — GST, invoices and group rates
+              go through email. Nobody takes a commission on your stay, which is
+              the whole point of booking directly. On arrival all you need is a
+              government photo ID — check-in runs from 2:00 PM, check-out from
+              12:00 noon, and bags can be held for the morning if you land
+              early.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="shell pb-24 md:pb-32">
         <div className="grid gap-14 md:grid-cols-12">
           <div className="md:col-span-7" data-reveal="zoom">
             <h2 className="sr-only">Reserve rooms at Jade River Resort, directly</h2>
-            <Suspense fallback={<div className="min-h-[420px] animate-pulse bg-paper-2" />}>
-              <BookingForm />
-            </Suspense>
+            <BookingForm />
           </div>
 
           <aside className="md:col-span-4 md:col-start-9">

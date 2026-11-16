@@ -97,7 +97,6 @@ export default async function PostPage({
       />
 
       <article className="pt-[68px] md:pt-[80px]">
-        <h2 className="sr-only">The full note from Jade River Resort</h2>
         <header className="shell">
           <div className="flex items-center justify-between gap-4 border-b border-line py-5">
             <div className="flex items-center gap-5">
@@ -120,6 +119,7 @@ export default async function PostPage({
               >
                 {post.title}
               </h1>
+              <h2 className="sr-only">The full note — {post.title}</h2>
             </div>
             <p
               className="self-end font-display text-[1.1rem] leading-snug text-ink/65 md:col-span-3"
@@ -136,6 +136,7 @@ export default async function PostPage({
             <Image
               src={post.image}
               alt={post.imageAlt}
+                title={post.imageAlt}
               width={1600}
               height={900}
               priority
@@ -198,9 +199,9 @@ export default async function PostPage({
                 href={`/post/${next.slug}`}
                 className="group mt-4 flex items-end justify-between gap-6"
               >
-                <h2 className="max-w-[18ch] text-[clamp(1.8rem,4vw,4rem)] leading-[0.98] transition-colors duration-500 group-hover:text-clay">
+                <p className="max-w-[18ch] font-display text-[clamp(1.8rem,4vw,4rem)] leading-[0.98] transition-colors duration-500 group-hover:text-clay">
                   {next.title}
-                </h2>
+                </p>
                 <span className="mb-2 text-3xl">
                   →
                 </span>

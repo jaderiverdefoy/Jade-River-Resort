@@ -9,17 +9,37 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https:",
+              "font-src 'self' data:",
+              "connect-src 'self' https://*.api.sanity.io wss://*.api.sanity.io https://cdn.sanity.io",
+              "media-src 'self'",
+              "frame-src 'self' https://www.google.com https://www.google.com/maps",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'self'",
+            ].join("; "),
+          },
         ],
       },
     ];
   },
   images: {
-    // The default deviceSizes include 3840px, which served enormous assets and
-    // blew past the size budget. Cap at 1920 and allow quality 60 for the few
-    // hero images that stay above 100 KB AVIF at quality 75.
+    // Every image on the site is prerendered AVIF ≤ ~94 KB (see
+    // scripts/build-jade-images.sh). The on-demand optimizer's JPEG fallback
+    // was the only thing still producing >100 KB responses for crawlers that
+    // do not advertise AVIF support — so every <Image> serves the file as
+    // committed.
+    unoptimized: true,
     deviceSizes: [640, 750, 828, 1080, 1200, 1600, 1920],
     qualities: [60, 65, 75],
-    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "cdn.sanity.io" },

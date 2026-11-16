@@ -45,6 +45,16 @@ export default function GalleryPage() {
 
       <section className="shell pb-24 md:pb-32">
         <h2 className="sr-only">Photographs of Jade River Resort</h2>
+        <p className="body-copy mb-8 max-w-[64ch]">
+          Every frame here was shot on the property, and every one of them shows
+          the same building from a slightly different angle — the walnut facade
+          in the rain, the lawn at dusk with one light on, the balcony that
+          faces east and catches the first of the sun. Nothing is stock,
+          nothing is staged for a brochure nobody believes; the rooms you see
+          are the rooms we keep, and the light is whatever the valley decided
+          that day. Bring binoculars for the birds, and ignore the ones that
+          pretend to be tame.
+        </p>
         <GalleryGrid />
       </section>
 

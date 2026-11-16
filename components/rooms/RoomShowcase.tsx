@@ -30,6 +30,7 @@ export default function RoomShowcase() {
                     <Image
                       src={room.image}
                       alt={`${room.name} at Jade River Resort`}
+                      title={`${room.name} at Jade River Resort`}
                       width={1600}
                       height={900}
                       sizes="(min-width: 768px) 58vw, 100vw"

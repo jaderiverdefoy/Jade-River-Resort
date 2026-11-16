@@ -65,11 +65,31 @@ function normaliseRead(readTime?: string) {
   return readTime.replace(/\s*read$/i, "").trim() || "4 min";
 }
 
-function imageUrl(image?: SanityImage | null, width = 1600) {
+/**
+ * The seeded main image for "A slow guide to Aru Valley" is the full
+ * 1672×941 dusk shot, which no compression setting can keep under 100 KB.
+ * When the post still references that exact asset, serve an equivalent,
+ * re-encoded crop from /public instead. If the CMS swaps the image for a
+ * different one, the guard stops matching and the CDN asset is used as-is.
+ */
+const LOCAL_MAIN_IMAGE_OVERRIDE: Record<string, string> = {
+  "image-e2bd8b29b94e4ac7575b93f6b74c80dce793ac08-1672x941-webp":
+    "/images/jade/post-aru-valley.avif",
+};
+
+function imageUrl(image?: SanityImage | null, width = 1200) {
   if (!image?.asset) return FALLBACK_IMAGE;
+  const ref = image.asset?._ref;
+  const override = ref ? LOCAL_MAIN_IMAGE_OVERRIDE[ref] : undefined;
+  if (override && width >= 1200) return override;
   const builder = urlFor(image);
   if (!builder) return FALLBACK_IMAGE;
-  return builder.width(width).height(Math.round((width * 9) / 16)).fit("crop").url();
+  return builder
+    .width(width)
+    .height(Math.round((width * 9) / 16))
+    .fit("crop")
+    .quality(55)
+    .url();
 }
 
 function mapSanityPost(post: SanityPostListItem | SanityPost): BlogPost {
@@ -98,7 +118,7 @@ function mapSanityPost(post: SanityPostListItem | SanityPost): BlogPost {
             ...(full.seo.secondaryKeywords ?? []),
           ],
           ogImage: full.seo.ogImage?.asset
-            ? (urlFor(full.seo.ogImage)?.width(1200).height(630).fit("crop").url() ??
+            ? (urlFor(full.seo.ogImage)?.width(1200).height(630).fit("crop").quality(55).url() ??
               undefined)
             : undefined,
         }

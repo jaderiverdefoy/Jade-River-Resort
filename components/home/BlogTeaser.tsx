@@ -59,6 +59,7 @@ export default async function BlogTeaser() {
                     <Image
                       src={post.image}
                       alt={post.imageAlt}
+                title={post.imageAlt}
                       width={1600}
                       height={900}
                       sizes={

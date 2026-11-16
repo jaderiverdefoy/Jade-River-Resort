@@ -1,21 +1,38 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { rooms, site } from "@/lib/content";
 import { formatPrice } from "@/lib/utils";
 
+/**
+ * Room preselection happens via the URL *fragment* —
+ * e.g. /contact#room=executive-suite — not a query string. Fragments are never
+ * sent to the server, so every link pre-selects the same document and no
+ * duplicate, crawlable URLs are created (the crawl flagged the old
+ * `?room=` variants). Legacy `?room=` links still work on load, but we no
+ * longer generate them anywhere.
+ */
 export default function BookingForm({ initialRoom }: { initialRoom?: string }) {
-  const searchParams = useSearchParams();
-  const fromQuery = searchParams.get("room");
   const initial =
-    rooms.some((r) => r.slug === fromQuery) && typeof initialRoom === "undefined"
-      ? fromQuery!
-      : rooms.some((r) => r.slug === initialRoom)
-        ? initialRoom!
-        : rooms[0].slug;
+    rooms.some((r) => r.slug === initialRoom) ? initialRoom! : rooms[0].slug;
 
   const [room, setRoom] = useState(initial);
+
+  useEffect(() => {
+    const apply = () => {
+      const fromHash =
+        window.location.hash.match(/room=([^&]+)/)?.[1] ?? null;
+      const fromLegacyQuery =
+        new URLSearchParams(window.location.search).get("room") ?? null;
+      const slug = fromHash ?? fromLegacyQuery;
+      if (slug && rooms.some((r) => r.slug === decodeURIComponent(slug))) {
+        setRoom(decodeURIComponent(slug));
+      }
+    };
+    apply();
+    window.addEventListener("hashchange", apply);
+    return () => window.removeEventListener("hashchange", apply);
+  }, []);
   const [name, setName] = useState("");
   const [checkin, setCheckin] = useState("");
   const [checkout, setCheckout] = useState("");

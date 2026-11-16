@@ -26,6 +26,7 @@ function RoomCard({ room, index }: { room: Room; index: number }) {
             <Image
               src={room.image}
               alt={`${room.name} at Jade River Resort`}
+              title={`${room.name} at Jade River Resort`}
               width={1600}
               height={900}
               sizes="(min-width: 768px) 42vw, 100vw"
@@ -247,14 +248,16 @@ export default function RoomsRail() {
           <span className="eyebrow text-paper/65" data-reveal>
             03 — Stay
           </span>
-          <h2
+          <p
             id="stay-heading-mobile"
-            className="mt-3 text-[clamp(2.2rem,8vw,3rem)] leading-[0.98] text-paper"
+            role="heading"
+            aria-level={2}
+            className="mt-3 font-display text-[clamp(2.2rem,8vw,3rem)] font-semibold leading-[0.98] text-paper"
             data-reveal
             style={{ ["--reveal-delay" as string]: "60ms" }}
           >
             Three shapes of <em className="text-clay">quiet.</em>
-          </h2>
+          </p>
           <p
             className="mt-5 max-w-[32ch] text-[0.92rem] leading-relaxed text-paper/65"
             data-reveal

@@ -62,6 +62,7 @@ export default function ExperiencesPage() {
                   <Image
                     src={exp.image}
                     alt={exp.subtitle}
+                title={exp.subtitle}
                     width={1600}
                     quality={60}
                     height={900}

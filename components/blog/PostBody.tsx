@@ -101,6 +101,7 @@ const components: PortableTextComponents = {
           <Image
             src={src}
             alt={value?.alt || ""}
+                title={value?.alt || ""}
             width={1600}
             height={1000}
             sizes="(min-width: 768px) 68ch, 100vw"

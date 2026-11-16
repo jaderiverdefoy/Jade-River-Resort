@@ -77,7 +77,8 @@ function Row({
           >
             <Image
               src={item.src}
-              alt={i < items.length ? item.alt : ""}
+              alt={item.alt}
+                title={i < items.length ? item.alt : ""}
               width={1600}
               height={900}
               sizes="(min-width: 768px) 26vw, 80vw"

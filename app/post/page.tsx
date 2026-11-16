@@ -46,6 +46,27 @@ export default async function BlogPage() {
         }
       />
 
+      <section className="shell pb-6">
+        <div className="grid gap-10 border-b border-line pb-8 md:grid-cols-12 md:gap-14">
+          <p className="eyebrow text-ink/65 md:col-span-3">Why we write</p>
+          <div className="max-w-[62ch] space-y-4 text-[0.95rem] leading-relaxed text-ink/75 md:col-span-8">
+            <p>
+              Nothing here is filler. These are field notes from the property —
+              the sound of the Lidder at six in the morning, the case for
+              keeping a resort at thirteen rooms, and a slow, practical guide to
+              the Aru valley when you have a day to spend and somewhere you
+              would rather not rush to.
+            </p>
+            <p>
+              If something here answers your question better than the FAQ does,
+              write to us anyway — the resort answers its own correspondence.
+              Current notes: the sound of the Lidder at dawn; why thirteen rooms
+              is the point; a slow guide to Aru Valley.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="shell pb-24 md:pb-32">
         <h2 className="sr-only">Blog posts from Pahalgam</h2>
         {!lead ? (
@@ -76,6 +97,7 @@ export default async function BlogPage() {
                   <Image
                     src={lead.image}
                     alt={lead.imageAlt}
+                title={lead.imageAlt}
                     width={1600}
                     height={900}
                     priority
@@ -124,6 +146,7 @@ export default async function BlogPage() {
                       <Image
                         src={post.image}
                         alt={post.imageAlt}
+                title={post.imageAlt}
                         width={1600}
                         height={900}
                         sizes="(min-width: 768px) 48vw, 100vw"

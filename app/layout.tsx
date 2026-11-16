@@ -56,9 +56,9 @@ export const metadata: Metadata = {
     description: site.description,
     images: [
       {
-        url: "/images/jade/gallery-07.webp",
-        width: 1672,
-        height: 941,
+        url: "/images/jade/og-default.webp",
+        width: 1200,
+        height: 630,
         alt: "Jade River Resort at dusk in snow",
       },
     ],

@@ -28,7 +28,7 @@ export const nav = [
   { label: "Location", href: "/location" },
 ];
 
-const jade = (name: string) => `/images/jade/${name}.webp`;
+const jade = (name: string) => `/images/jade/${name}.avif`;
 
 export const img = {
   hero: jade("gallery-07"),
@@ -61,6 +61,10 @@ export type Room = {
   gallery: string[];
   amenities: string[];
   bestFor: string;
+  /** One rich paragraph, unique per room — shown on the room page. */
+  note: string;
+  /** Short unique meta description, ≤ 155 characters. */
+  metaDescription: string;
 };
 
 export const rooms: Room[] = [
@@ -91,6 +95,10 @@ export const rooms: Room[] = [
       "Hot water",
     ],
     bestFor: "Couples and slow mornings",
+    note:
+      "Nine balcony rooms sit along the side of the building closest to the river, so the Lidder does the waking up. Each keeps the same bones — the walnut bed, the reading chair, the blackout curtains that actually hold — and the same broad view of the valley doing whatever the weather decides. Mornings here tend to start slowly, and lunch tends to run long, because the balcony is the best seat in the house and nobody is in a hurry to give it up.",
+    metaDescription:
+      "A private balcony over the Lidder, from ₹6,000 a night. Pahalgam, Kashmir. Direct booking only.",
   },
   {
     slug: "executive-suite",
@@ -121,6 +129,10 @@ export const rooms: Room[] = [
       "Room service",
     ],
     bestFor: "Couples and special occasions",
+    note:
+      "The two suites sit at the quiet end of the property, where the pine forest comes closest to the building. Each has a genuine living room — not a corner with a chair, but a full second room with a sofa, a low table and somewhere to leave a camera. The bedroom closes off completely, the bathroom was built for long baths after a long drive, and suite guests are usually first to hear that a bonfire has been lit on the lawn. Most anniversaries and honeymoons that pass through the valley end up booked here.",
+    metaDescription:
+      "A wide living room, a king bed and a long-bath bathroom. From ₹8,000 a night. Direct booking.",
   },
   {
     slug: "executive-duplex-family-room",
@@ -152,6 +164,10 @@ export const rooms: Room[] = [
       "Lawn access",
     ],
     bestFor: "Families and longer stays",
+    note:
+      "The duplex is the room we built for families who travel together and also want a full night of sleep. Upstairs belongs to the children — a bedroom, a small living space and the novelty of stairs — and downstairs is the adults’ bedroom, the usual walnut bed, and immediate access to the lawn. Longer stays work particularly well in the duplex: supermarket runs, half-days at Aru, naps that nobody apologises for, and the river ten steps from the front door.",
+    metaDescription:
+      "Two levels — children upstairs, a quiet floor for you. From ₹13,000 a night. Direct booking.",
   },
 ];
 

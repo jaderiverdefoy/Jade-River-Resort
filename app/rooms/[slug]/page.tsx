@@ -21,7 +21,7 @@ export async function generateMetadata({
   if (!room) return { title: "Room not found" };
   return {
     title: room.name,
-    description: `${room.description} From ${formatPrice(room.price)} per night at Jade River Resort, Pahalgam. Direct booking only.`,
+    description: room.metaDescription,
     alternates: { canonical: `/rooms/${room.slug}` },
     openGraph: {
       type: "website",
@@ -109,13 +109,17 @@ export default async function RoomPage({
               {room.long}
             </p>
 
+            <p className="body-copy mt-6 max-w-[62ch]" data-reveal style={{ ["--reveal-delay" as string]: "90ms" }}>
+              {room.note}
+            </p>
+
             <div
               className="mt-12 grid gap-10 border-t border-line pt-8 sm:grid-cols-2"
               data-reveal
               style={{ ["--reveal-delay" as string]: "140ms" }}
             >
               <div>
-                <h2 className="font-display text-[1.5rem]">In the room</h2>
+                <h2 className="font-display text-[1.5rem]">Inside the {room.name}</h2>
                 <ul className="mt-5 space-y-3">
                   {room.amenities.map((a) => (
                     <li key={a} className="flex items-baseline gap-3 border-b border-line pb-2.5 text-[0.93rem]">
@@ -126,7 +130,7 @@ export default async function RoomPage({
                 </ul>
               </div>
               <div>
-                <h2 className="font-display text-[1.5rem]">Good to know</h2>
+                <h2 className="font-display text-[1.5rem]">Good to know — {room.short}</h2>
                 <dl className="mt-5 space-y-4">
                   {[
                     ["Check-in", "2:00 PM"],
@@ -160,7 +164,7 @@ export default async function RoomPage({
               </p>
 
               <Link
-                href={`/contact?room=${room.slug}`}
+                href={`/contact#room=${room.slug}`}
                 className="btn mt-7 w-full justify-center"
 
               >
@@ -203,6 +207,7 @@ export default async function RoomPage({
               <Image
                 src={src}
                 alt={`${room.name} — view ${i + 1}`}
+                title={`${room.name} — view ${i + 1}`}
                 width={1600}
                 height={900}
                 sizes="(min-width: 768px) 33vw, 100vw"
@@ -231,6 +236,7 @@ export default async function RoomPage({
                   <Image
                     src={other.image}
                     alt={other.name}
+                title={other.name}
                     width={1600}
                     height={900}
                     sizes="96px"

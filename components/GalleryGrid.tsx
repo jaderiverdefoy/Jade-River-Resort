@@ -59,6 +59,7 @@ export default function GalleryGrid() {
               <Image
                 src={item.src}
                 alt={item.alt}
+                title={item.alt}
                 width={1600}
                 height={900}
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
@@ -119,6 +120,7 @@ export default function GalleryGrid() {
                 <Image
                   src={gallery[index].src}
                   alt={gallery[index].alt}
+                title={gallery[index].alt}
                   width={1600}
                   height={900}
                   sizes="100vw"

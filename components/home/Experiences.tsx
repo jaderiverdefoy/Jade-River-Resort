@@ -56,6 +56,7 @@ export default function Experiences() {
                   <Image
                     src={exp.image}
                     alt={exp.title}
+                title={exp.title}
                     width={1600}
                     height={900}
                     sizes="80px"

@@ -6,7 +6,7 @@ import { JsonLd, breadcrumb } from "@/lib/schema";
 import { pageMeta } from "@/lib/metadata";
 
 export const metadata = pageMeta({
-  title: "FAQ — Jade River Resort",
+  title: "Frequently Asked Questions — Jade River Resort",
   description:
     "Where is Jade River Resort, how many rooms, rates, direct booking, cancellation, check-in times, IDs, airport distance — answered plainly.",
   path: "/faq",

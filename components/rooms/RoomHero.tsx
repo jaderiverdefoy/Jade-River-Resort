@@ -22,6 +22,7 @@ export default function RoomHero({ room }: { room: Room }) {
           <Image
             src={room.image}
             alt={`${room.name} at Jade River Resort`}
+            title={`${room.name} at Jade River Resort`}
             width={1600}
             height={900}
             priority

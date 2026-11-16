@@ -65,6 +65,28 @@ export default async function ReviewsPage() {
         }
       />
 
+      <section className="shell pb-6">
+        <div className="grid gap-10 border-b border-line pb-8 md:grid-cols-12 md:gap-14">
+          <p className="eyebrow text-ink/65 md:col-span-3">What the notes say</p>
+          <div className="max-w-[62ch] space-y-4 text-[0.95rem] leading-relaxed text-ink/75 md:col-span-8">
+            <p>
+              Read enough of them and the same three things keep coming up: the
+              quiet — the Lidder on the other side of the window and nothing
+              else to answer to — the rooms, which guests describe as simply
+              honest and genuinely comfortable, and the fact that booking is
+              direct, with nobody taking a cut on the way.
+            </p>
+            <p>
+              The notes are left by guests on the resort’s own form and on
+              Google. We do not edit, merge or re-order them; if you booked,
+              stayed and wrote, it is what is printed here. A sentence about
+              the room, the balcony or the morning tea is worth more to the
+              next guest than a paragraph of adjectives.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="shell pb-20">
         {googleAttribution ? (
           <div className="mb-10 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5">

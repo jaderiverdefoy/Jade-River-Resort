@@ -63,6 +63,7 @@ export default function Hero() {
                 <Image
                   src={img.hero}
                   alt="Jade River Resort in the Lidder valley, Pahalgam"
+                title="Jade River Resort in the Lidder valley, Pahalgam"
                   width={1600}
                   height={900}
                   priority
