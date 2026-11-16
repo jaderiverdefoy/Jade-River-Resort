@@ -38,3 +38,10 @@ next-env.d.ts
 
 # os
 Thumbs.db
+
+# docs (kept local only — never pushed)
+*.md
+
+# Screaming Frog crawl reports (kept local only — never pushed)
+Errors/
+new-errors/
