@@ -55,6 +55,8 @@ export default function FaqPage() {
         }
       />
 
+      <h2 className="sr-only">Frequently asked questions about Jade River Resort, answered plainly</h2>
+
       <section className="shell pb-24 md:pb-32">
         <div className="grid gap-10 md:grid-cols-12">
           <div className="md:col-span-3">

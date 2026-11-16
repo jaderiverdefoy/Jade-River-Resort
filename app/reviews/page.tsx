@@ -144,9 +144,9 @@ export default async function ReviewsPage() {
                     </span>
                   </div>
                   {review.title ? (
-                    <h2 className="mt-5 font-display text-[clamp(1.5rem,2.2vw,2.1rem)] leading-[1.05] tracking-[-0.03em] transition-colors duration-500 group-hover:text-clay">
+                    <h3 className="font-bold mt-5 font-display text-[clamp(1.5rem,2.2vw,2.1rem)] leading-[1.05] tracking-[-0.03em] transition-colors duration-500 group-hover:text-clay">
                       {review.title}
-                    </h2>
+                    </h3>
                   ) : null}
                 </div>
                 <div>

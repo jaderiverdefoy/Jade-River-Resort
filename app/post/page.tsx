@@ -115,9 +115,9 @@ export default async function BlogPage() {
                   <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/65">
                     {lead.category} · {lead.date}
                   </p>
-                  <h2 className="mt-4 text-[clamp(2rem,3.6vw,3.4rem)] leading-[0.98] transition-colors duration-500 group-hover:text-clay">
+                  <h3 className="font-bold mt-4 text-[clamp(2rem,3.6vw,3.4rem)] leading-[0.98] transition-colors duration-500 group-hover:text-clay">
                     {lead.title}
-                  </h2>
+                  </h3>
                   <p className="body-copy mt-5">{lead.excerpt}</p>
                 </div>
                 <div className="mt-8 flex items-center justify-between border-t border-line pt-4">
@@ -158,9 +158,9 @@ export default async function BlogPage() {
                         <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/65">
                           {post.category} · {post.date}
                         </p>
-                        <h2 className="mt-3 font-display text-[clamp(1.5rem,2.4vw,2.2rem)] leading-[1.05] transition-colors duration-500 group-hover:text-clay">
+                        <h3 className="font-bold mt-3 font-display text-[clamp(1.5rem,2.4vw,2.2rem)] leading-[1.05] transition-colors duration-500 group-hover:text-clay">
                           {post.title}
-                        </h2>
+                        </h3>
                         <p className="mt-3 max-w-[42ch] text-[0.92rem] leading-relaxed text-ink/70">
                           {post.excerpt}
                         </p>

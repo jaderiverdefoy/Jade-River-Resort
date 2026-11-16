@@ -13,14 +13,14 @@ export default function Experiences() {
             <span className="eyebrow text-ink/65" data-reveal>
               04 — Experiences
             </span>
-            <h2
+            <h3
               id="experiences-heading"
-              className="mt-4 text-[clamp(2.3rem,5.6vw,5.4rem)] leading-[0.94]"
+              className="font-bold mt-4 text-[clamp(2.3rem,5.6vw,5.4rem)] leading-[0.94]"
               data-reveal
             >
               Six ways to do nothing{" "}
               <em className="text-clay">very well.</em>
-            </h2>
+            </h3>
           </div>
           <p className="body-copy max-w-sm md:col-span-4 md:col-start-9" data-reveal>
             Nothing here is scheduled. A fire is lit at dusk, a path follows the

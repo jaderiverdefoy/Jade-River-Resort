@@ -28,13 +28,13 @@ export default function GuestNotes({
             <span className="eyebrow text-paper/65" data-reveal>
               09 — Guest notes
             </span>
-            <h2
+            <h3
               id="reviews-heading"
-              className="mt-4 text-[clamp(2.3rem,5.2vw,5rem)] leading-[0.94]"
+              className="font-bold mt-4 text-[clamp(2.3rem,5.2vw,5rem)] leading-[0.94]"
               data-reveal
             >
               Small numbers. <em className="text-clay">That’s the point.</em>
-            </h2>
+            </h3>
           </div>
           <p className="body-copy max-w-sm text-paper/80 md:col-span-4 md:col-start-9" data-reveal>
             Thirteen rooms, a handful of staff, and guests who tend to stay longer

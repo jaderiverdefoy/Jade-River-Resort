@@ -45,6 +45,8 @@ export default function PoliciesPage() {
         }
       />
 
+      <h2 className="sr-only">Policies at Jade River Resort, Pahalgam</h2>
+
       <section className="shell pb-24 md:pb-32">
         <div className="grid gap-12 md:grid-cols-12">
           <aside className="md:col-span-3">
@@ -85,9 +87,9 @@ export default function PoliciesPage() {
                   style={{ ["--reveal-delay" as string]: `${(i % 3) * 70}ms` }}
                 >
                   <div className="flex items-baseline justify-between gap-6">
-                    <h2 className="text-[clamp(1.9rem,3.4vw,3.2rem)] leading-none">
+                    <h3 className="font-bold text-[clamp(1.9rem,3.4vw,3.2rem)] leading-none">
                       {section.title}
-                    </h2>
+                    </h3>
                     <span className="num text-ink/65">0{i + 1}</span>
                   </div>
                   <ul className="mt-8 space-y-4">

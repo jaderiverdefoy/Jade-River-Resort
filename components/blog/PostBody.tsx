@@ -21,12 +21,12 @@ const components: PortableTextComponents = {
       </p>
     ),
     h2: ({ children }) => (
-      <h2
+      <h3
         className="mt-14 font-display text-[clamp(1.8rem,3.2vw,2.8rem)] leading-[1.05] tracking-[-0.03em]"
         data-reveal
       >
         {children}
-      </h2>
+      </h3>
     ),
     h3: ({ children }) => (
       <h3

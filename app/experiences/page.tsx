@@ -45,6 +45,8 @@ export default function ExperiencesPage() {
         }
       />
 
+      <h2 className="sr-only">Experiences at Jade River Resort, Pahalgam</h2>
+
       <section className="shell pb-24 md:pb-32">
         {experiences.map((exp, i) => {
           const flip = i % 2 === 1;
@@ -83,9 +85,9 @@ export default function ExperiencesPage() {
                 style={{ ["--reveal-delay" as string]: "90ms" }}
               >
                 <span className="num text-ink/65">0{i + 1}</span>
-                <h2 className="mt-4 text-[clamp(2rem,3.6vw,3.5rem)] leading-[0.96]">
+                <h3 className="font-bold mt-4 text-[clamp(2rem,3.6vw,3.5rem)] leading-[0.96]">
                   {exp.title}
-                </h2>
+                </h3>
                 <p className="mt-4 font-display text-[1.15rem] leading-snug text-clay">
                   {exp.subtitle}
                 </p>

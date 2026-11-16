@@ -14,13 +14,13 @@ export default async function BlogTeaser() {
             <span className="eyebrow text-ink/65" data-reveal>
               08 — Blog
             </span>
-            <h2
+            <h3
               id="blog-heading"
-              className="mt-4 text-[clamp(2.3rem,5.2vw,5rem)] leading-[0.94]"
+              className="font-bold mt-4 text-[clamp(2.3rem,5.2vw,5rem)] leading-[0.94]"
               data-reveal
             >
               Notes from the <em className="text-clay">slow side.</em>
-            </h2>
+            </h3>
           </div>
           <Link
             href="/post"

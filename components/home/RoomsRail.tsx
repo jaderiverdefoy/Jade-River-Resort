@@ -162,14 +162,14 @@ export default function RoomsRail() {
               <span className="eyebrow text-paper/65" data-reveal>
                 03 — Stay
               </span>
-              <h2
+              <h3
                 id="stay-heading"
-                className="mt-3 text-[clamp(2rem,3.4vw,3.4rem)] leading-[0.95] text-paper"
+                className="font-bold mt-3 text-[clamp(2rem,3.4vw,3.4rem)] leading-[0.95] text-paper"
                 data-reveal
                 style={{ ["--reveal-delay" as string]: "70ms" }}
               >
                 Three shapes of <em className="text-clay">quiet.</em>
-              </h2>
+              </h3>
             </div>
             <div className="flex items-center gap-6">
               <span className="font-mono text-[11px] tracking-[0.12em] text-paper/65">

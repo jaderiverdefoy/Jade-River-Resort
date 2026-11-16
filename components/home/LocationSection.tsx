@@ -32,13 +32,13 @@ export default function LocationSection() {
             <span className="eyebrow text-ink/65" data-reveal>
               07 — Location
             </span>
-            <h2
+            <h3
               id="location-heading"
-              className="mt-4 text-[clamp(2.3rem,4.8vw,4.6rem)] leading-[0.95]"
+              className="font-bold mt-4 text-[clamp(2.3rem,4.8vw,4.6rem)] leading-[0.95]"
               data-reveal
             >
               The road ends. <em className="text-clay">The river keeps going.</em>
-            </h2>
+            </h3>
 
             <p className="body-copy mt-8 max-w-md" data-reveal>
               Pahalgam sits at 2,130 metres in the Lidder valley. Srinagar Airport is

@@ -43,6 +43,8 @@ export default function RoomsPage() {
           </div>
         }
       />
+
+      <h2 className="sr-only">Rooms and suites at Jade River Resort, Pahalgam</h2>
       <RoomShowcase />
 
       <section className="bg-forest py-16 text-paper md:py-20" data-reveal="zoom">

@@ -13,15 +13,15 @@ export default function ClosingCTA() {
             <span className="eyebrow text-ink/70" data-reveal>
               10 — Reserve directly
             </span>
-            <h2
+            <h3
               id="cta-heading"
-              className="mt-5 text-[clamp(3.2rem,10vw,9.6rem)] leading-[0.86] tracking-[-0.05em]"
+              className="font-bold mt-5 text-[clamp(3.2rem,10vw,9.6rem)] leading-[0.86] tracking-[-0.05em]"
               data-reveal
             >
               Come
               <br />
               <em className="text-ink/80">slow</em> down.
-            </h2>
+            </h3>
           </div>
 
           <div className="md:col-span-4">

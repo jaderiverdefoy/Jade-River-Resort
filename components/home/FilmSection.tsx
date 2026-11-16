@@ -80,13 +80,13 @@ export default function FilmSection() {
         </button>
 
         <div className="relative z-10 flex w-full flex-col gap-6 p-[clamp(1.15rem,4.2vw,5rem)] pb-10 md:flex-row md:items-end md:justify-between">
-          <h2
+          <h3
             id="film-heading"
-            className="max-w-[13ch] text-[clamp(2.4rem,5.4vw,5.2rem)] leading-[0.94] text-paper"
+            className="font-bold max-w-[13ch] text-[clamp(2.4rem,5.4vw,5.2rem)] leading-[0.94] text-paper"
             data-reveal
           >
             The property, <em className="text-paper/70">in motion.</em>
-          </h2>
+          </h3>
           <p className="max-w-sm text-[0.95rem] leading-[1.7] text-paper/70" data-reveal>
             Drone passes over the wooden roofs, the stream, and the pines behind. The
             film is being cut from the property’s own footage.

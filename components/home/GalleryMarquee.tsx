@@ -108,13 +108,13 @@ export default function GalleryMarquee() {
             <span className="eyebrow text-ink/65" data-reveal>
               05 — Gallery
             </span>
-            <h2
+            <h3
               id="gallery-heading"
-              className="mt-4 text-[clamp(2.3rem,5.6vw,5.4rem)] leading-[0.94]"
+              className="font-bold mt-4 text-[clamp(2.3rem,5.6vw,5.4rem)] leading-[0.94]"
               data-reveal
             >
               Frames the valley <em className="text-clay">already made.</em>
-            </h2>
+            </h3>
           </div>
           <Link
             href="/gallery"

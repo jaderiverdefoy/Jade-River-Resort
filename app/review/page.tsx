@@ -23,6 +23,7 @@ export default function ReviewPage() {
           >
             How was <em className="text-clay">your stay?</em>
           </h1>
+          <h2 className="sr-only">Tell us about your stay at Jade River Resort</h2>
           <p
             className="body-copy mt-6 max-w-sm"
             data-reveal

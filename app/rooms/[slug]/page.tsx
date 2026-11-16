@@ -130,7 +130,7 @@ export default async function RoomPage({
                 </ul>
               </div>
               <div>
-                <h2 className="font-display text-[1.5rem]">Good to know — {room.short}</h2>
+                <h3 className="font-bold font-display text-[1.5rem]">Good to know — {room.short}</h3>
                 <dl className="mt-5 space-y-4">
                   {[
                     ["Check-in", "2:00 PM"],
