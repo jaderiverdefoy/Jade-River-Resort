@@ -1,67 +1,123 @@
-# Jade River Resort — SEO fixes (Screaming Frog crawl, 14 unique reports, all fixed)
+# Jade River Resort — SEO fixes (Screaming Frog crawl)
 
-The 9 duplicate files were dropped from the list after an md5 check:
-- page_titles_duplicate - Copy.csv / page_titles_outside_head(1).csv / page_titles_outside_head.csv
-- canonicals_missing - Copy.csv / canonicals_outside_head.csv / canonicals_missing.csv
-- h2_missing - Copy - Copy.csv / h2_missing - Copy.csv
-- h1_duplicate - Copy.csv / h1_multiple.csv
-- security_missing_secure_referrerpolicy_header.csv / security_missing_xframeoptions_header.csv
-- directives_outside_head(1).csv / directives_outside_head.csv
-- meta_description_outside_head.csv / meta_description_duplicate.csv
-- canonicals_canonicalised(1).csv / canonicals_canonicalised.csv
+## Input: 24 CSVs → 13 unique issues
 
-## What was wrong and how it was fixed
+md5-deduplicated (24 files, 13 unique reports):
 
-1. page_titles_duplicate / 2. page_titles_outside_head / 3. canonicals_missing /
-4. canonicals_outside_head / 7. directives_outside_head / 8. meta_description_duplicate
-   → /contact was a dynamic server page, which pushed its title/description/canonical/
-   robots tags into the body instead of <head>, and produced duplicates across the
-   `?room=` querystring URLs. Fixed: /contact is now static; `useSearchParams` read the
-   room inside a `<Suspense>` boundary in the client `BookingForm`.
-   Result: tags are in `<head>` on every page (verified via curl).
+| # | Unique file | Duplicate(s)
+|---|-------------|-------------|
+| 1 | page_titles_duplicate - Copy.csv | page_titles_duplicate - Copy.csv = page_titles_outside_head.csv = page_titles_outside_head(1).csv |
+| 2 | canonicals_missing.csv | canonicals_missing - Copy.csv = canonicals_outside_head.csv |
+| 3 | canonicals_canonicalised.csv | canonicals_canonicalised(1).csv |
+| 4 | canonicals_nonindexable_canonical.csv | — |
+| 5 | meta_description_duplicate.csv | meta_description_outside_head.csv |
+| 6 | directives_outside_head.csv | directives_outside_head(1).csv |
+| 7 | h1_multiple.csv | h1_duplicate - Copy.csv |
+| 8 | h2_missing - Copy - Copy.csv | h2_missing - Copy.csv |
+| 9 | images_missing_alt_text.csv | — |
+| 10 | images_missing_size_attributes.csv | — |
+| 11 | images_over_100_kb.csv | — |
+| 12 | response_codes_external_client_error_(4xx).csv | — |
+| 13 | security_missing_secure_referrerpolicy_header.csv | security_missing_xframeoptions_header.csv (identical file, same 84 URLs) |
 
-5/6/14. canonicals_canonicalised / canonicals_nonindexable_canonical /
-   response_codes_external_client_error (404s)
-   → canonical pointed at defoyhotelsandresorts.com/jade-river-resort* which returns 404.
-   Fixed: single source of truth — canonical everywhere is now the live host
-   `https://jaderiverresort.defoy.in` (verified in served HTML for every page tested);
-   schema.org breadcrumb, JSON-LD, sitemap, robots and llms.txt all updated too.
+## What was wrong → what was fixed
 
-   Note: this retires the "deployment path = /jade-river-resort" plan documented in
-   bsuiness.md. If that sub-path on the parent domain ever goes live, the base URL in
-   `lib/content.ts`/`app/layout.tsx`/`app/sitemap.ts` should be revisited.
+1. **page_titles_duplicate / outside_head** — `/contact` was a dynamic server
+   page, so Next streamed `<title>` into the body and produced one title for
+   `/contact` and every `?room=` URL. Fixed: `/contact` is static; `useSearchParams`
+   reads the room inside `<BookingForm>` behind `<Suspense>`; query URLs canonicalize
+   to `/contact`. *Additionally found & fixed in this pass:* pageMeta titles were
+   double-branded ("… — Jade River Resort — Jade River Resort") because the root
+   layout's `%s — Jade River Resort` template was applied on top of titles that
+   already contained the brand. `pageMeta` now emits `title: { absolute: … }`
+   and OG/Twitter titles use the exact title.
 
-9. h1_multiple → SignatureIntro rendered an "Jade River" <h1> on every page; the real
-   page H1 came from PageHeader. Fixed: intro text is now an aria-hidden div.
+2. **canonicals_missing** — `/contact` (+ the 3 `?room=` URLs) now emits
+   `<link rel="canonical" href="https://jaderiverresort.defoy.in/contact">`.
 
-10. h2_missing → /contact had no <h2> at all. Fixed: visible sr-only h2 added
-    ("Reserve rooms at Jade River Resort, directly").
+3. **canonicals_canonicalised / #4 canonicals_nonindexable_canonical** — every
+   canonical pointed at `defoyhotelsandresorts.com/jade-river-resort*` (404).
+   Fixed: single source of truth — `metadataBase = https://jaderiverresort.defoy.in`
+   and relative canonicals everywhere; sitemap, robots, llms.txt, schema.org
+   breadcrumb and JSON-LD all use the same host.
 
-11. images_missing_alt_text → every gallery image in the repo already had an alt; the
-    deployed build was simply outdated/staggered. Rebuild will clear it.
+4. **response_codes_external_client_error_(4xx)** — the 14 URLs live on
+   `defoyhotelsandresorts.com`, **not** on this codebase. They were discovered
+   *only* because the canonical pointed there; with canonicals fixed there is
+   no path to them. **Action left on the parent domain:** add
+   `301 → https://jaderiverresort.defoy.in/...` for `/jade-river-resort*`.
+   Cannot be done from this repo.
 
-12. images_missing_size_attributes → all `next/image fill` usages converted to explicit
-    width/height + className="absolute inset-0 h-full w-full object-cover". Verified in
-    served HTML: <img ... width="1600" height="900"> everywhere.
+5. **meta_description_duplicate / outside_head** — same root causes as #1/#3;
+   fixed the same way. Verified: description in `<head>` on every page and
+   unique per page (contact query variants canonicalize to `/contact`).
 
-13. images_over_100_kb → next.config deviceSizes capped at 1920 (default included 3840px).
+6. **directives_outside_head** — root layout used to render a manual `<head>`
+   block, pushing robots/canonical into the body. Removed; metadata is server
+   `head` output again. **Additionally found & fixed in this pass:** every page
+   using `pageMeta` / `generateMetadata` passed `robots: undefined` explicitly,
+   which made Next drop the root `robots`/`googlebot` tags entirely — every
+   indexable page was missing `<meta name="robots">`. Fixed: `pageMeta` and the
+   post generator only emit `robots`/`keywords` when actually set. Verified:
+   all indexable pages now emit
+   `robots: index, follow` + `googlebot: index, follow, max-image-preview:large`.
 
-15. security_missing_xframeoptions_header → next.config now sends
-    X-Frame-Options: SAMEORIGIN and Referrer-Policy: strict-origin-when-cross-origin
-    on every response.
+7. **h1_multiple / h1_duplicate** — SignatureIntro renders "Jade River" as an
+   aria-hidden decorative div; the page header still owns the single `<h1>`.
+   Verified h1=1 on every page (and 0 on /studio, which is noindex).
 
-## Verification (local production build)
+8. **h2_missing** — `/contact` emitted zero h2. Fixed (visible sr-only h2:
+   "Reserve rooms at Jade River Resort, directly"). Also added sr-only h2s to
+   the other zero-h2 pages: `/gallery`, `/post`, `/post/[slug]`, `/review`.
+   Verified: every public page now has ≥1 h2.
 
-- /contact: h1=1, h2=1, title/description/canonical/robots/og all INSIDE <head> ✔
-- /gallery, /rooms, /rooms/*, /faq, /policies, /reviews, /post/*: title in <head>,
-  canonical = jaderiverresort.defoy.in…, h1=1 ✔
-- X-Frame-Options + Referrer-Policy headers present ✔
-- sitemap.xml lists jaderiverresort.defoy.in paths; robots.txt points at
-  : /sitemap.xml with host jaderiverresort.defoy.in ✔
-- All <img> tags carry width/height attributes ✔
+9. **images_missing_alt_text** — every gallery/hero/room/experience image
+   already carries an alt; `<img>` without alt = 0 on every page (verified
+   served HTML).
+
+10. **images_missing_size_attributes** — all `next/image fill` usages were
+    converted to explicit `width`/`height` + `absolute … object-cover`. Verified:
+    `<img>` without width/height = 0 on every page.
+
+11. **images_over_100_kb** — crawl reported `w=3840` variants (root cause:
+    Next's default `deviceSizes` included 3840). Fixed: `deviceSizes` capped at
+    1920, `formats: ["image/avif", "image/webp"]`, and `quality={60}` on the
+    remaining heavy heroes (FilmSection aerial, GalleryGrid, GalleryMarquee,
+    Experiences). Verified no `w=3840` in served HTML, and previously-flagged
+    images at w=1920 AVIF: gallery-09 ≈ 96 KB, gallery-10 ≈ 93 KB,
+    exp-family ≈ 91 KB — all under 100 KB.
+
+12. *(see 4 — 4xx)*
+
+13. **security_missing_xframeoptions / referrerpolicy** (same 84 URLs, both
+    headers) — `next.config.ts` `headers()` now sends
+    `X-Frame-Options: SAMEORIGIN` and
+    `Referrer-Policy: strict-origin-when-cross-origin` on every response
+    (verified on HTML and static assets).
+
+## Verification (local `next build` + `next start`)
+
+| Page | <title> | canonical | robots | h1 | h2 | imgs w/o alt | imgs w/o dims | w=3840 |
+|---|---|---|---|---|---|---|---|---|
+| / | ✔ in head | defoy.in | index, follow | 1 | 9 | 0 | 0 | 0 |
+| /contact (+ ?room=…) | ✔ | …/contact | ✔ | 1 | 1 | 0 | 0 | 0 |
+| /experiences | ✔ | … | ✔ | 1 | 6 | 0 | 0 | 0 |
+| /gallery | ✔ | … | ✔ | 1 | 1 | 0 | 0 | 0 |
+| /location | ✔ | … | ✔ | 1 | 1 | 0 | 0 | 0 |
+| /policies | ✔ | … | ✔ | 1 | 4 | 0 | 0 | 0 |
+| /faq | ✔ | … | ✔ | 1 | 11 | 0 | 0 | 0 |
+| /post | ✔ | … | ✔ | 1 | 1 | 0 | 0 | 0 |
+| /post/why-thirteen-rooms-is-the-point | ✔ | … | ✔ | 1 | 1 | 0 | 0 | 0 |
+| /reviews | ✔ | … | ✔ | 1 | 1 | 0 | 0 | 0 |
+| /review | ✔ (noindex) | … | noindex | 1 | 1 | 0 | 0 | 0 |
+| /rooms* | ✔ | … | ✔ | 1 | ≥2 | 0 | 0 | 0 |
+
+Plus: sitemap.xml lists defoy.in hosts; robots.txt → sitemap + host = defoy.in;
+`X-Frame-Options` / `Referrer-Policy` on HTML and JS/CSS; title/OG/twitter
+unique per page; OG URL == canonical.
 
 ## IMPORTANT
-
-The Screaming Frog report was generated against the DEPLOYED site. Every fix above
-lands in code; the report only clears after the site is rebuilt and redeployed.
-
+These are code-level fixes. The crawl only clears after a rebuild + deploy to
+`jaderiverresort.defoy.in`. Re-run Screaming Frog on the deployed site and
+mark this list complete. On the parent domain, add 301 redirects from
+`defoyhotelsandresorts.com/jade-river-resort*` (owner's side, not this repo).

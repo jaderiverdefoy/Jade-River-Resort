@@ -25,22 +25,35 @@ export async function generateMetadata({
   const description = post.seo?.metaDescription || post.excerpt;
   const image = post.seo?.ogImage || post.image;
 
-  return {
+  const metadata: Metadata = {
     title,
     description,
-    keywords: post.seo?.keywords?.length ? post.seo.keywords : undefined,
     alternates: {
       canonical: post.seo?.canonicalUrl || `/post/${post.slug}`,
     },
-    robots: post.seo?.noIndex ? { index: false, follow: false } : undefined,
     openGraph: {
       type: "article",
+      url: post.seo?.canonicalUrl || `/post/${post.slug}`,
+      siteName: "Jade River Resort",
       title,
       description,
       publishedTime: post.publishedAt,
       images: [{ url: image, width: 1200, height: 630, alt: post.imageAlt }],
     },
+    twitter: {
+      card: "summary_large_image",
+      site: "@defoyhotels",
+      title,
+      description,
+      images: [image],
+    },
   };
+
+  // Avoid explicit `undefined` keys — Next treats them as overriding the
+  // root layout's values rather than "not set".
+  if (post.seo?.keywords?.length) metadata.keywords = post.seo.keywords;
+  if (post.seo?.noIndex) metadata.robots = { index: false, follow: false };
+  return metadata;
 }
 
 export default async function PostPage({
@@ -84,6 +97,7 @@ export default async function PostPage({
       />
 
       <article className="pt-[68px] md:pt-[80px]">
+        <h2 className="sr-only">The full note from Jade River Resort</h2>
         <header className="shell">
           <div className="flex items-center justify-between gap-4 border-b border-line py-5">
             <div className="flex items-center gap-5">

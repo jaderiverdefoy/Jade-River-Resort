@@ -1,18 +1,18 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import ReviewForm from "@/components/ReviewForm";
+import { pageMeta } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Leave a review",
-  description:
-    "Tell Jade River Resort about your stay.",
-  alternates: { canonical: "/review" },
+export const metadata = pageMeta({
+  title: "Leave a review — Jade River Resort",
+  description: "Tell Jade River Resort about your stay.",
+  path: "/review",
   robots: { index: false, follow: false },
-};
+});
 
 export default function ReviewPage() {
   return (
     <section className="relative min-h-svh pt-[68px] md:pt-[80px]">
+      <h2 className="sr-only">Tell us about your stay at Jade River Resort</h2>
       <div className="shell grid gap-12 py-14 md:grid-cols-12 md:gap-8 md:py-24">
         <div className="md:col-span-5">
           <span className="eyebrow text-ink/65" data-reveal>

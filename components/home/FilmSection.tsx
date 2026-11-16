@@ -45,6 +45,7 @@ export default function FilmSection() {
             src={img.aerial}
             alt="Aerial view of the river and pine forest around Jade River Resort"
             width={1600}
+            quality={60}
             height={900}
             sizes="100vw"
             className="absolute inset-0 h-full w-full object-cover"

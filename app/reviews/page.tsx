@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import ReviewForm from "@/components/ReviewForm";
 import ReviewText from "@/components/ReviewText";
 import { getDisplayReviews } from "@/lib/googleReviews";
 import { JsonLd, breadcrumb, reviewListSchema } from "@/lib/schema";
+import { pageMeta } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Guest Reviews",
+export const metadata = pageMeta({
+  title: "Guest Reviews — Jade River Resort, Pahalgam",
   description:
-    "Notes left by guests of Jade River Resort, Pahalgam — on the river, the balcony rooms, the duplex family rooms, the bonfire evenings, and the quiet.",
-  alternates: { canonical: "/reviews" },
-};
+    "Notes left by guests of Jade River Resort: the river, the balcony rooms, the bonfire evenings and the quiet. Read what people wrote.",
+  path: "/reviews",
+});
 
 export default async function ReviewsPage() {
   const { reviews, rating, total, mapsUrl } = await getDisplayReviews();

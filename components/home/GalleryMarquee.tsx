@@ -81,6 +81,7 @@ function Row({
               width={1600}
               height={900}
               sizes="(min-width: 768px) 26vw, 80vw"
+              quality={60}
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1100ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-forest/0 transition-colors duration-500 group-hover:bg-forest/20" />

@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { site } from "@/lib/content";
 import { mapsHref } from "@/lib/utils";
 import { JsonLd, breadcrumb } from "@/lib/schema";
+import { pageMeta } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Location & Directions",
-  description: `Jade River Resort is in Pahalgam, Jammu & Kashmir, at ${site.coords} and 2,130 metres. Srinagar Airport is 96 km away, roughly 2.5 to 3 hours by road.`,
-  alternates: { canonical: "/location" },
-};
+export const metadata = pageMeta({
+  title: "Location & Directions — Jade River Resort, Pahalgam",
+  description:
+    "Jade River Resort is in Pahalgam at 2,130 metres. Srinagar Airport is 96 km away, roughly 2.5 to 3 hours by road. Directions and coordinates.",
+  path: "/location",
+});
 
 const nearby = [
   { name: "Aru Valley", note: "Meadows and a quiet road" },

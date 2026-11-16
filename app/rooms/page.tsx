@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import RoomShowcase from "@/components/rooms/RoomShowcase";
 import { JsonLd, breadcrumb } from "@/lib/schema";
 import { rooms } from "@/lib/content";
+import { pageMeta } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Rooms & Suites",
+export const metadata = pageMeta({
+  title: "Rooms & Suites — Jade River Resort, Pahalgam",
   description:
-    "Thirteen rooms at Jade River Resort, Pahalgam: nine Premium Balcony Rooms, two Executive Suites, and two Executive Duplex Family Rooms. Direct booking only.",
-  alternates: { canonical: "/rooms" },
-};
+    "Thirteen rooms at Jade River Resort: nine Premium Balcony Rooms, two Executive Suites and two Executive Duplex Family Rooms. Direct booking.",
+  path: "/rooms",
+});
 
 export default function RoomsPage() {
   return (

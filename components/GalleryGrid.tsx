@@ -62,6 +62,7 @@ export default function GalleryGrid() {
                 width={1600}
                 height={900}
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                quality={60}
                 className="absolute inset-0 h-full w-full reveal-media object-cover transition-transform duration-[1300ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.05]"
               />
             </div>
@@ -121,6 +122,7 @@ export default function GalleryGrid() {
                   width={1600}
                   height={900}
                   sizes="100vw"
+                  quality={60}
                   className="absolute inset-0 h-full w-full object-contain"
                   priority
                 />

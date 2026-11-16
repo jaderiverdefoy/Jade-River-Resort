@@ -24,9 +24,19 @@ export async function generateMetadata({
     description: `${room.description} From ${formatPrice(room.price)} per night at Jade River Resort, Pahalgam. Direct booking only.`,
     alternates: { canonical: `/rooms/${room.slug}` },
     openGraph: {
+      type: "website",
+      url: `/rooms/${room.slug}`,
+      siteName: "Jade River Resort",
       title: `${room.name} — Jade River Resort`,
       description: room.description,
       images: [{ url: room.image, width: 1600, height: 900, alt: room.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: "@defoyhotels",
+      title: `${room.name} — Jade River Resort`,
+      description: room.description,
+      images: [room.image],
     },
   };
 }

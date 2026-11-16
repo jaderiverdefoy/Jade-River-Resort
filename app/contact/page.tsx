@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import PageHeader from "@/components/PageHeader";
 import BookingForm from "@/components/BookingForm";
 import { site } from "@/lib/content";
 import { JsonLd, breadcrumb } from "@/lib/schema";
+import { pageMeta } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Contact & Direct Booking",
+export const metadata = pageMeta({
+  title: "Contact & Direct Booking — Jade River Resort",
   description:
-    "Reserve directly with Jade River Resort, Pahalgam. Choose a room, add dates and guests, and send a pre-filled WhatsApp message to +91 9541898820. No OTAs.",
-  alternates: { canonical: "/contact" },
-};
+    "Reserve directly with Jade River Resort, Pahalgam. Choose a room, add dates and guests, send a pre-filled WhatsApp message to +91 9541898820.",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { policies, site } from "@/lib/content";
 import { JsonLd, breadcrumb } from "@/lib/schema";
+import { pageMeta } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Reservation & Stay Policies",
+export const metadata = pageMeta({
+  title: "Policies — Jade River Resort, Pahalgam",
   description:
-    "Cancellation, payment, check-in and identification policies for Jade River Resort, Pahalgam. Full refund 15+ days before arrival, 50% retention 15–10 days, 100% within 10 days.",
-  alternates: { canonical: "/policies" },
-};
+    "Cancellation, payment and check-in policies at Jade River Resort. Full refund 15+ days before arrival, 50% retention 15–10 days, 100% within 10 days.",
+  path: "/policies",
+});
 
 export default function PoliciesPage() {
   return (

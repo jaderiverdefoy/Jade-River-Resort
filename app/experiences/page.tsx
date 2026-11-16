@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { experiences, img } from "@/lib/content";
 import { slugify } from "@/lib/utils";
 import { JsonLd, breadcrumb } from "@/lib/schema";
+import { pageMeta } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Experiences",
+export const metadata = pageMeta({
+  title: "Experiences — Jade River Resort",
   description:
-    "Bonfire evenings beside the Lidder, river walks, Pahalgam sightseeing, photography, family days and quiet luxury at Jade River Resort.",
-  alternates: { canonical: "/experiences" },
-};
+    "Bonfire evenings beside the Lidder, river walks, Pahalgam sightseeing, photography and quiet luxury at Jade River Resort, Pahalgam.",
+  path: "/experiences",
+});
 
 export default function ExperiencesPage() {
   return (
@@ -63,6 +63,7 @@ export default function ExperiencesPage() {
                     src={exp.image}
                     alt={exp.subtitle}
                     width={1600}
+                    quality={60}
                     height={900}
                     sizes="(min-width: 768px) 58vw, 100vw"
                     className="absolute inset-0 h-full w-full reveal-media object-cover transition-transform duration-[1300ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.05]"

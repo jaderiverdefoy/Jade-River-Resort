@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import FaqAccordion from "@/components/FaqAccordion";
 import { faqs, site } from "@/lib/content";
 import { JsonLd, breadcrumb } from "@/lib/schema";
+import { pageMeta } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Frequently Asked Questions",
+export const metadata = pageMeta({
+  title: "FAQ — Jade River Resort",
   description:
-    "Where is Jade River Resort, how many rooms, rates, direct booking, cancellation, check-in times, IDs, airport distance and nearby places — answered plainly.",
-  alternates: { canonical: "/faq" },
-};
+    "Where is Jade River Resort, how many rooms, rates, direct booking, cancellation, check-in times, IDs, airport distance — answered plainly.",
+  path: "/faq",
+});
 
 export default function FaqPage() {
   return (

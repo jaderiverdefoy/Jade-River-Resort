@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import GalleryGrid from "@/components/GalleryGrid";
 import { gallery } from "@/lib/content";
 import { JsonLd, breadcrumb } from "@/lib/schema";
+import { pageMeta } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Gallery",
+export const metadata = pageMeta({
+  title: "Gallery — photographs of Jade River Resort",
   description:
-    "Photographs of Jade River Resort and the Lidder valley: wooden architecture, the river, pine forest, the lawn, and the light at different hours.",
-  alternates: { canonical: "/gallery" },
-};
+    "Photographs of Jade River Resort and the Lidder valley: wooden architecture, the river, pine forest, the lawn and the light at different hours.",
+  path: "/gallery",
+});
 
 export default function GalleryPage() {
   return (
@@ -44,6 +44,7 @@ export default function GalleryPage() {
       />
 
       <section className="shell pb-24 md:pb-32">
+        <h2 className="sr-only">Photographs of Jade River Resort</h2>
         <GalleryGrid />
       </section>
 

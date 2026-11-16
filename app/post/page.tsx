@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { getAllPosts } from "@/lib/posts";
 import { JsonLd, breadcrumb } from "@/lib/schema";
+import { pageMeta } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Blog",
+export const metadata = pageMeta({
+  title: "Blog — notes from Jade River Resort",
   description:
-    "Notes from Jade River Resort: the sound of the Lidder at dawn, a slow guide to Aru Valley, and why thirteen rooms is the point.",
-  alternates: { canonical: "/post" },
-};
+    "Notes from Jade River Resort: the sound of the Lidder at dawn and a slow guide to Aru Valley. Field notes from Pahalgam.",
+  path: "/post",
+});
 
 export default async function BlogPage() {
   const posts = await getAllPosts();
@@ -47,6 +47,7 @@ export default async function BlogPage() {
       />
 
       <section className="shell pb-24 md:pb-32">
+        <h2 className="sr-only">Blog posts from Pahalgam</h2>
         {!lead ? (
           <div className="border-t border-line pt-10" data-reveal>
             <p className="font-display text-[clamp(1.6rem,3vw,2.4rem)] leading-snug text-ink/70">
