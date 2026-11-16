@@ -1,13 +1,21 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { rooms, site } from "@/lib/content";
 import { formatPrice } from "@/lib/utils";
 
 export default function BookingForm({ initialRoom }: { initialRoom?: string }) {
-  const [room, setRoom] = useState(
-    rooms.some((r) => r.slug === initialRoom) ? initialRoom! : rooms[0].slug,
-  );
+  const searchParams = useSearchParams();
+  const fromQuery = searchParams.get("room");
+  const initial =
+    rooms.some((r) => r.slug === fromQuery) && typeof initialRoom === "undefined"
+      ? fromQuery!
+      : rooms.some((r) => r.slug === initialRoom)
+        ? initialRoom!
+        : rooms[0].slug;
+
+  const [room, setRoom] = useState(initial);
   const [name, setName] = useState("");
   const [checkin, setCheckin] = useState("");
   const [checkout, setCheckout] = useState("");

@@ -8,7 +8,7 @@ import { JsonLd, breadcrumb } from "@/lib/schema";
 export const metadata: Metadata = {
   title: "Location & Directions",
   description: `Jade River Resort is in Pahalgam, Jammu & Kashmir, at ${site.coords} and 2,130 metres. Srinagar Airport is 96 km away, roughly 2.5 to 3 hours by road.`,
-  alternates: { canonical: "/jade-river-resort/location" },
+  alternates: { canonical: "/location" },
 };
 
 const nearby = [
@@ -22,8 +22,8 @@ export default function LocationPage() {
     <>
       <JsonLd
         data={breadcrumb([
-          { name: "Home", path: "/jade-river-resort" },
-          { name: "Location", path: "/jade-river-resort/location" },
+          { name: "Home", path: "/" },
+          { name: "Location", path: "/location" },
         ])}
       />
       <PageHeader

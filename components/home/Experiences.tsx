@@ -56,9 +56,10 @@ export default function Experiences() {
                   <Image
                     src={exp.image}
                     alt={exp.title}
-                    fill
+                    width={1600}
+                    height={900}
                     sizes="80px"
-                    className="reveal-media object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-110"
+                    className="absolute inset-0 h-full w-full reveal-media object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-110"
                   />
                 </div>
               </div>

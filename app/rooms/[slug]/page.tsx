@@ -22,7 +22,7 @@ export async function generateMetadata({
   return {
     title: room.name,
     description: `${room.description} From ${formatPrice(room.price)} per night at Jade River Resort, Pahalgam. Direct booking only.`,
-    alternates: { canonical: `/jade-river-resort/rooms/${room.slug}` },
+    alternates: { canonical: `/rooms/${room.slug}` },
     openGraph: {
       title: `${room.name} — Jade River Resort`,
       description: room.description,
@@ -50,9 +50,9 @@ export default async function RoomPage({
       <JsonLd
         data={[
           breadcrumb([
-            { name: "Home", path: "/jade-river-resort" },
-            { name: "Rooms", path: "/jade-river-resort/rooms" },
-            { name: room.name, path: `/jade-river-resort/rooms/${room.slug}` },
+            { name: "Home", path: "/" },
+            { name: "Rooms", path: "/rooms" },
+            { name: room.name, path: `/rooms/${room.slug}` },
           ]),
           {
             "@context": "https://schema.org",
@@ -193,9 +193,10 @@ export default async function RoomPage({
               <Image
                 src={src}
                 alt={`${room.name} — view ${i + 1}`}
-                fill
+                width={1600}
+                height={900}
                 sizes="(min-width: 768px) 33vw, 100vw"
-                className="reveal-media object-cover"
+                className="absolute inset-0 h-full w-full reveal-media object-cover"
               />
             </div>
           ))}
@@ -220,9 +221,10 @@ export default async function RoomPage({
                   <Image
                     src={other.image}
                     alt={other.name}
-                    fill
+                    width={1600}
+                    height={900}
                     sizes="96px"
-                    className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
                 </div>
                 <div className="flex-1">

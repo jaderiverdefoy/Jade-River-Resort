@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import PageHeader from "@/components/PageHeader";
 import BookingForm from "@/components/BookingForm";
 import { site } from "@/lib/content";
@@ -9,22 +10,16 @@ export const metadata: Metadata = {
   title: "Contact & Direct Booking",
   description:
     "Reserve directly with Jade River Resort, Pahalgam. Choose a room, add dates and guests, and send a pre-filled WhatsApp message to +91 9541898820. No OTAs.",
-  alternates: { canonical: "/jade-river-resort/contact" },
+  alternates: { canonical: "/contact" },
 };
 
-export default async function ContactPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ room?: string }>;
-}) {
-  const { room } = await searchParams;
-
+export default function ContactPage() {
   return (
     <>
       <JsonLd
         data={breadcrumb([
-          { name: "Home", path: "/jade-river-resort" },
-          { name: "Contact", path: "/jade-river-resort/contact" },
+          { name: "Home", path: "/" },
+          { name: "Contact", path: "/contact" },
         ])}
       />
       <PageHeader
@@ -55,7 +50,10 @@ export default async function ContactPage({
       <section className="shell pb-24 md:pb-32">
         <div className="grid gap-14 md:grid-cols-12">
           <div className="md:col-span-7" data-reveal="zoom">
-            <BookingForm initialRoom={room} />
+            <h2 className="sr-only">Reserve rooms at Jade River Resort, directly</h2>
+            <Suspense fallback={<div className="min-h-[420px] animate-pulse bg-paper-2" />}>
+              <BookingForm />
+            </Suspense>
           </div>
 
           <aside className="md:col-span-4 md:col-start-9">

@@ -19,7 +19,7 @@ export default function robots(): MetadataRoute.Robots {
       ...aiBots.map((bot) => ({ userAgent: bot, allow: "/" })),
     ],
     sitemap:
-      "https://defoyhotelsandresorts.com/jade-river-resort/sitemap.xml",
-    host: "https://defoyhotelsandresorts.com",
+      "https://jaderiverresort.defoy.in/sitemap.xml",
+    host: "https://jaderiverresort.defoy.in",
   };
 }

@@ -29,7 +29,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://defoyhotelsandresorts.com"),
+  metadataBase: new URL("https://jaderiverresort.defoy.in"),
   title: {
     default: "Jade River Resort — Life, Slowed by the River",
     template: "%s — Jade River Resort",
@@ -46,11 +46,11 @@ export const metadata: Metadata = {
     "Jammu and Kashmir stay",
     "Defoy Hotels",
   ],
-  alternates: { canonical: "/jade-river-resort" },
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "/jade-river-resort",
+    url: "/",
     siteName: "Jade River Resort",
     title: "Jade River Resort — Life, Slowed by the River",
     description: site.description,
@@ -85,7 +85,7 @@ const jsonLd = {
   "@type": "LodgingBusiness",
   name: "Jade River Resort",
   description: site.description,
-  url: "https://defoyhotelsandresorts.com/jade-river-resort",
+  url: "https://jaderiverresort.defoy.in",
   telephone: "+919541898820",
   email: "jaderiverresort@defoy.in",
   priceRange: "₹6,000 – ₹13,000",
@@ -124,14 +124,17 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${manrope.variable} ${inter.variable} ${fraunces.variable}`}
     >
-      <head>
+      <body>
+        {/* The manual <head> block used to live here — it forced Next to stream
+            the page metadata (title/description/canonical/robots) into the body
+            instead of the head, which is what Screaming Frog flagged. Inlined
+            scripts run from the top of the body instead; the metadata goes back
+            into a proper head. */}
         <script dangerouslySetInnerHTML={{ __html: introScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-      </head>
-      <body>
         <a
           href="#main"
           className="fixed left-4 top-4 z-[120] -translate-y-24 bg-forest px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] text-paper transition-transform focus:translate-y-0"

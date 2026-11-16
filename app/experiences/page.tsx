@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "Experiences",
   description:
     "Bonfire evenings beside the Lidder, river walks, Pahalgam sightseeing, photography, family days and quiet luxury at Jade River Resort.",
-  alternates: { canonical: "/jade-river-resort/experiences" },
+  alternates: { canonical: "/experiences" },
 };
 
 export default function ExperiencesPage() {
@@ -18,8 +18,8 @@ export default function ExperiencesPage() {
     <>
       <JsonLd
         data={breadcrumb([
-          { name: "Home", path: "/jade-river-resort" },
-          { name: "Experiences", path: "/jade-river-resort/experiences" },
+          { name: "Home", path: "/" },
+          { name: "Experiences", path: "/experiences" },
         ])}
       />
       <PageHeader
@@ -62,9 +62,10 @@ export default function ExperiencesPage() {
                   <Image
                     src={exp.image}
                     alt={exp.subtitle}
-                    fill
+                    width={1600}
+                    height={900}
                     sizes="(min-width: 768px) 58vw, 100vw"
-                    className="reveal-media object-cover transition-transform duration-[1300ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.05]"
+                    className="absolute inset-0 h-full w-full reveal-media object-cover transition-transform duration-[1300ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.05]"
                   />
                   <span className="absolute left-5 top-5 bg-paper px-3 py-2 font-mono text-[9px] uppercase tracking-[0.18em]">
                     {exp.meta}

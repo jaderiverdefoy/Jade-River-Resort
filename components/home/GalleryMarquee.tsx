@@ -78,9 +78,10 @@ function Row({
             <Image
               src={item.src}
               alt={i < items.length ? item.alt : ""}
-              fill
+              width={1600}
+              height={900}
               sizes="(min-width: 768px) 26vw, 80vw"
-              className="object-cover transition-transform duration-[1100ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1100ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-forest/0 transition-colors duration-500 group-hover:bg-forest/20" />
             <span className="absolute bottom-4 left-4 font-mono text-[9px] uppercase tracking-[0.18em] text-paper/0 transition-colors duration-500 group-hover:text-paper/80">

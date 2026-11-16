@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Reservation & Stay Policies",
   description:
     "Cancellation, payment, check-in and identification policies for Jade River Resort, Pahalgam. Full refund 15+ days before arrival, 50% retention 15–10 days, 100% within 10 days.",
-  alternates: { canonical: "/jade-river-resort/policies" },
+  alternates: { canonical: "/policies" },
 };
 
 export default function PoliciesPage() {
@@ -16,8 +16,8 @@ export default function PoliciesPage() {
     <>
       <JsonLd
         data={breadcrumb([
-          { name: "Home", path: "/jade-river-resort" },
-          { name: "Policies", path: "/jade-river-resort/policies" },
+          { name: "Home", path: "/" },
+          { name: "Policies", path: "/policies" },
         ])}
       />
       <PageHeader

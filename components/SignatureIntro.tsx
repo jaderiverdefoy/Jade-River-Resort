@@ -116,9 +116,12 @@ export default function SignatureIntro() {
           </svg>
 
           <div className="relative overflow-hidden px-2">
-            <h1 className="intro-title text-center font-display text-[clamp(2.6rem,9.5vw,8.5rem)] leading-[0.9] tracking-[-0.04em] text-paper">
+            <div
+              className="intro-title text-center font-display text-[clamp(2.6rem,9.5vw,8.5rem)] leading-[0.9] tracking-[-0.04em] text-paper"
+              aria-hidden="true"
+            >
               Jade River
-            </h1>
+            </div>
           </div>
 
           <p className="intro-fade mt-5 text-center font-display text-[clamp(1.1rem,2.2vw,1.8rem)] text-paper/90">

@@ -17,7 +17,7 @@ export const site = {
   lngDisplay: "75.2715° E",
   elevation: "2,130 m",
   roomsTotal: 13,
-  url: "https://defoyhotelsandresorts.com/jade-river-resort",
+  url: "https://jaderiverresort.defoy.in",
 };
 
 export const nav = [

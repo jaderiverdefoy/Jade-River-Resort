@@ -26,9 +26,10 @@ function RoomCard({ room, index }: { room: Room; index: number }) {
             <Image
               src={room.image}
               alt={`${room.name} at Jade River Resort`}
-              fill
+              width={1600}
+              height={900}
               sizes="(min-width: 768px) 42vw, 100vw"
-              className="reveal-media object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+              className="absolute inset-0 h-full w-full reveal-media object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
             />
             <div className="absolute inset-0 bg-forest/10 transition-opacity duration-700 group-hover:opacity-0" />
           </div>

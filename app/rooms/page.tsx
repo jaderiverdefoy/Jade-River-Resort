@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Rooms & Suites",
   description:
     "Thirteen rooms at Jade River Resort, Pahalgam: nine Premium Balcony Rooms, two Executive Suites, and two Executive Duplex Family Rooms. Direct booking only.",
-  alternates: { canonical: "/jade-river-resort/rooms" },
+  alternates: { canonical: "/rooms" },
 };
 
 export default function RoomsPage() {
@@ -17,8 +17,8 @@ export default function RoomsPage() {
     <>
       <JsonLd
         data={breadcrumb([
-          { name: "Home", path: "/jade-river-resort" },
-          { name: "Rooms", path: "/jade-river-resort/rooms" },
+          { name: "Home", path: "/" },
+          { name: "Rooms", path: "/rooms" },
         ])}
       />
       <PageHeader

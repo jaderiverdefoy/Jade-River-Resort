@@ -63,11 +63,12 @@ export default function Hero() {
                 <Image
                   src={img.hero}
                   alt="Jade River Resort in the Lidder valley, Pahalgam"
-                  fill
+                  width={1600}
+                  height={900}
                   priority
                   fetchPriority="high"
                   sizes="100vw"
-                  className="object-cover object-center"
+                  className="absolute inset-0 h-full w-full object-cover object-center"
                 />
 
                 {/* Video fades in only when it can actually play */}

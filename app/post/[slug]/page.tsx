@@ -30,7 +30,7 @@ export async function generateMetadata({
     description,
     keywords: post.seo?.keywords?.length ? post.seo.keywords : undefined,
     alternates: {
-      canonical: post.seo?.canonicalUrl || `/jade-river-resort/post/${post.slug}`,
+      canonical: post.seo?.canonicalUrl || `/post/${post.slug}`,
     },
     robots: post.seo?.noIndex ? { index: false, follow: false } : undefined,
     openGraph: {
@@ -61,9 +61,9 @@ export default async function PostPage({
       <JsonLd
         data={[
           breadcrumb([
-            { name: "Home", path: "/jade-river-resort" },
-            { name: "Blog", path: "/jade-river-resort/post" },
-            { name: post.title, path: `/jade-river-resort/post/${post.slug}` },
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/post" },
+            { name: post.title, path: `/post/${post.slug}` },
           ]),
           {
             "@context": "https://schema.org",
@@ -122,10 +122,11 @@ export default async function PostPage({
             <Image
               src={post.image}
               alt={post.imageAlt}
-              fill
+              width={1600}
+              height={900}
               priority
               sizes="100vw"
-              className="reveal-media object-cover"
+              className="absolute inset-0 h-full w-full reveal-media object-cover"
             />
           </div>
         </div>

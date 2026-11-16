@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Blog",
   description:
     "Notes from Jade River Resort: the sound of the Lidder at dawn, a slow guide to Aru Valley, and why thirteen rooms is the point.",
-  alternates: { canonical: "/jade-river-resort/post" },
+  alternates: { canonical: "/post" },
 };
 
 export default async function BlogPage() {
@@ -20,8 +20,8 @@ export default async function BlogPage() {
     <>
       <JsonLd
         data={breadcrumb([
-          { name: "Home", path: "/jade-river-resort" },
-          { name: "Blog", path: "/jade-river-resort/post" },
+          { name: "Home", path: "/" },
+          { name: "Blog", path: "/post" },
         ])}
       />
       <PageHeader
@@ -75,10 +75,11 @@ export default async function BlogPage() {
                   <Image
                     src={lead.image}
                     alt={lead.imageAlt}
-                    fill
+                    width={1600}
+                    height={900}
                     priority
                     sizes="(min-width: 768px) 58vw, 100vw"
-                    className="reveal-media object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.04]"
+                    className="absolute inset-0 h-full w-full reveal-media object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.04]"
                   />
                   <span className="absolute left-5 top-5 bg-paper px-3 py-2 font-mono text-[9px] uppercase tracking-[0.18em]">
                     Featured note
@@ -122,9 +123,10 @@ export default async function BlogPage() {
                       <Image
                         src={post.image}
                         alt={post.imageAlt}
-                        fill
+                        width={1600}
+                        height={900}
                         sizes="(min-width: 768px) 48vw, 100vw"
-                        className="reveal-media object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.05]"
+                        className="absolute inset-0 h-full w-full reveal-media object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.05]"
                       />
                     </div>
                     <div className="mt-5 flex items-start justify-between gap-4">

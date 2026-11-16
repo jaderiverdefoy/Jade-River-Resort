@@ -6,7 +6,7 @@ export function breadcrumb(items: { name: string; path: string }[]) {
       "@type": "ListItem",
       position: i + 1,
       name: item.name,
-      item: `https://defoyhotelsandresorts.com${item.path}`,
+      item: `https://jaderiverresort.defoy.in${item.path}`,
     })),
   };
 }

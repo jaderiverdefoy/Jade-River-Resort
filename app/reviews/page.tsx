@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Guest Reviews",
   description:
     "Notes left by guests of Jade River Resort, Pahalgam — on the river, the balcony rooms, the duplex family rooms, the bonfire evenings, and the quiet.",
-  alternates: { canonical: "/jade-river-resort/reviews" },
+  alternates: { canonical: "/reviews" },
 };
 
 export default async function ReviewsPage() {
@@ -30,8 +30,8 @@ export default async function ReviewsPage() {
     <>
       <JsonLd
         data={breadcrumb([
-          { name: "Home", path: "/jade-river-resort" },
-          { name: "Reviews", path: "/jade-river-resort/reviews" },
+          { name: "Home", path: "/" },
+          { name: "Reviews", path: "/reviews" },
         ])}
       />
       {averageRating && reviews.length > 0 ? (

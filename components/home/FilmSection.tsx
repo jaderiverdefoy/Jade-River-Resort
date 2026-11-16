@@ -44,9 +44,10 @@ export default function FilmSection() {
           <Image
             src={img.aerial}
             alt="Aerial view of the river and pine forest around Jade River Resort"
-            fill
+            width={1600}
+            height={900}
             sizes="100vw"
-            className="object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
           />
         </motion.div>
         <div className="absolute inset-0 bg-forest/45" aria-hidden="true" />
