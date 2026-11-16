@@ -37,6 +37,10 @@ export const metadata: Metadata = {
   description: site.description,
   applicationName: "Jade River Resort",
   authors: [{ name: "Defoy Hotels & Resorts" }],
+  // Google Search Console — HTML-file token is hosted at
+  // /googleeb47d71c8469d746.html; the meta tag below is the same token for
+  // the "HTML tag" verification method.
+  verification: { google: "eb47d71c8469d746" },
   keywords: [
     "Jade River Resort",
     "Pahalgam resort",
