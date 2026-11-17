@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { rooms } from "@/lib/content";
+import type { Room } from "@/lib/content";
 import { formatPrice } from "@/lib/utils";
 import TiltCard from "@/components/ui/TiltCard";
 
-export default function RoomShowcase() {
+export default function RoomShowcase({ rooms }: { rooms: Room[] }) {
   return (
     <section className="shell pb-24 md:pb-32">
       <div className="flex flex-col">
@@ -64,7 +64,7 @@ export default function RoomShowcase() {
                       {room.bestFor}
                     </span>
                   </div>
-                  <h3 className="font-bold mt-4 text-[clamp(2rem,3.8vw,3.6rem)] leading-[0.96]">
+                  <h3 className="font-bold mt-4 text-[clamp(1.9rem,3.6vw,3.3rem)] leading-[0.96]">
                     {room.name}
                   </h3>
                   <p className="body-copy mt-5">{room.long}</p>

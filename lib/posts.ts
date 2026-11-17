@@ -28,6 +28,9 @@ export type BlogPost = {
   read: string;
   image: string;
   imageAlt: string;
+  /** Wide image at the top of the article — deliberately different from `image`. */
+  heroImage: string;
+  heroImageAlt: string;
   /** Legacy paragraph array for the static fallback posts. */
   body: string[] | null;
   /** Portable Text body for CMS posts. */
@@ -89,11 +92,15 @@ function imageUrl(image?: SanityImage | null, width = 1200) {
     .height(Math.round((width * 9) / 16))
     .fit("crop")
     .quality(55)
+    .format("webp")
     .url();
 }
 
 function mapSanityPost(post: SanityPostListItem | SanityPost): BlogPost {
   const full = post as SanityPost;
+  // No fallback to the cover image: the article hero stays empty until a hero
+  // image is uploaded, and the page then renders the title on a plain dark band.
+  const hero = full.heroImage?.asset ? full.heroImage : null;
   return {
     slug: post.slug,
     title: post.title,
@@ -104,6 +111,8 @@ function mapSanityPost(post: SanityPostListItem | SanityPost): BlogPost {
     read: normaliseRead(post.readTime),
     image: imageUrl(post.mainImage),
     imageAlt: post.mainImage?.alt || post.title,
+    heroImage: hero ? imageUrl(hero, 1400) : "",
+    heroImageAlt: hero?.alt || post.title,
     body: null,
     portableBody: full.body ?? null,
     author: post.author?.name,
@@ -143,6 +152,8 @@ function mapStaticPost(post: (typeof staticPosts)[number]): BlogPost {
     read: post.read,
     image: post.image,
     imageAlt: post.title,
+    heroImage: post.heroImage,
+    heroImageAlt: post.title,
     body: post.body,
     portableBody: null,
     quote: post.quote,

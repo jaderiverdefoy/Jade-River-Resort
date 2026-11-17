@@ -65,15 +65,21 @@
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 0.94;
-    text-wrap: balance;
+    /* Fill each line before wrapping — the user wants line 1 as long as possible. */
+    text-wrap: wrap;
   }
 
+  /*
+   * Article subheadings are long, so balancing them leaves a half-empty first
+   * line ("Where to Stay: A" / "Riverside Experience"). Let them fill the
+   * measure and wrap at the last word that fits.
+   */
   h3 {
     font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 0.98;
-    text-wrap: balance;
+    text-wrap: wrap;
   }
 
   em {

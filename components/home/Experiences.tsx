@@ -1,10 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import { experiences } from "@/lib/content";
+import type { Experience } from "@/lib/content";
 import { slugify } from "@/lib/utils";
 import RiverDivider from "@/components/ui/RiverDivider";
 
-export default function Experiences() {
+export default function Experiences({
+  experiences,
+}: {
+  experiences: Experience[];
+}) {
   return (
     <section className="relative pt-20 md:pt-32" aria-labelledby="experiences-heading">
       <div className="shell">
@@ -15,10 +19,10 @@ export default function Experiences() {
             </span>
             <h3
               id="experiences-heading"
-              className="font-bold mt-4 text-[clamp(2.3rem,5.6vw,5.4rem)] leading-[0.94]"
+              className="font-bold mt-4 text-[clamp(2.1rem,4.5vw,4.3rem)] leading-[0.94]"
               data-reveal
             >
-              Six ways to do nothing{" "}
+              {experiences.length === 6 ? "Six" : experiences.length} ways to do nothing{" "}
               <em className="text-clay">very well.</em>
             </h3>
           </div>
@@ -43,7 +47,7 @@ export default function Experiences() {
                 </span>
 
                 <div className="overflow-hidden">
-                  <h3 className="origin-left font-display text-[clamp(1.7rem,4.2vw,3.8rem)] leading-[1.02] tracking-[-0.035em] transition-all duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-3 group-hover:text-copper md:group-hover:translate-x-6">
+                  <h3 className="origin-left font-display text-[clamp(1.7rem,3.6vw,3.3rem)] leading-[1.02] tracking-[-0.035em] transition-all duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-3 group-hover:text-copper md:group-hover:translate-x-6">
                     {exp.title}
                   </h3>
                 </div>

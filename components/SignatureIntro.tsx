@@ -117,7 +117,7 @@ export default function SignatureIntro() {
 
           <div className="relative overflow-hidden px-2">
             <div
-              className="intro-title text-center font-display text-[clamp(2.6rem,9.5vw,8.5rem)] leading-[0.9] tracking-[-0.04em] text-paper"
+              className="intro-title text-center font-display text-[clamp(2.3rem,7.4vw,6.8rem)] leading-[0.9] tracking-[-0.04em] text-paper"
               aria-hidden="true"
             >
               Jade River

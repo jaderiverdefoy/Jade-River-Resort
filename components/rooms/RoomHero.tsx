@@ -45,7 +45,7 @@ export default function RoomHero({ room }: { room: Room }) {
               initial={{ y: "110%" }}
               animate={{ y: "0%" }}
               transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-              className="max-w-[16ch] text-[clamp(2.4rem,7vw,7rem)] leading-[0.9] text-paper"
+              className="max-w-[16ch] text-[clamp(2.2rem,5.5vw,5.5rem)] leading-[0.9] text-paper"
             >
               {room.name}
             </motion.h1>

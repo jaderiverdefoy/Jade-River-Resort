@@ -18,7 +18,7 @@ export default function ReviewPage() {
             Guest notes · Jade River
           </span>
           <h1
-            className="mt-4 text-[clamp(2.6rem,6vw,5rem)] leading-[0.92] tracking-[-0.045em]"
+            className="mt-4 text-[clamp(2.2rem,4.9vw,4.1rem)] leading-[0.92] tracking-[-0.045em]"
             data-reveal
           >
             How was <em className="text-clay">your stay?</em>

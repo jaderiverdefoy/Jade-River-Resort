@@ -54,6 +54,8 @@ export type Room = {
   name: string;
   short: string;
   count: string;
+  /** How many identical rooms of this type exist. Used for the site total. */
+  units?: number;
   price: number;
   description: string;
   long: string;
@@ -73,6 +75,7 @@ export const rooms: Room[] = [
     name: "Premium Balcony Room",
     short: "Balcony",
     count: "9 rooms",
+    units: 9,
     price: 6000,
     description:
       "A private balcony, a low chair, and the sound of water finding its way through stone.",
@@ -105,6 +108,7 @@ export const rooms: Room[] = [
     name: "Executive Suite",
     short: "Suite",
     count: "2 suites",
+    units: 2,
     price: 8000,
     description:
       "More room to do nothing. A wide living space, a king bed, and a bathroom built for long baths.",
@@ -139,6 +143,7 @@ export const rooms: Room[] = [
     name: "Executive Duplex Family Room",
     short: "Duplex",
     count: "2 rooms",
+    units: 2,
     price: 13000,
     description:
       "Two levels. The children take the upper floor, and you take the quiet one.",
@@ -230,7 +235,13 @@ export const experiences: Experience[] = [
   },
 ];
 
-export const gallery = [
+export type GalleryItem = {
+  src: string;
+  alt: string;
+  span: "wide" | "std" | "tall";
+};
+
+export const gallery: GalleryItem[] = [
   { src: jade("gallery-01"), alt: "Balcony lounge looking out to the snowy Lidder valley", span: "wide" },
   { src: jade("gallery-02"), alt: "Duplex living room with a timber staircase", span: "std" },
   { src: jade("gallery-03"), alt: "Bedroom with a patterned bedspread and warm wood walls", span: "std" },
@@ -255,6 +266,7 @@ export const posts = [
     read: "4 min",
     category: "Notes from the river",
     image: img.aerial,
+    heroImage: img.hero,
     quote: "The first hour of the day belongs to the water. Everything else arrives later.",
     body: [
       "There is a moment, a little before six, when the valley is still holding its breath. The pines are black against a sky that has not decided on a colour yet, and the Lidder is the loudest thing in Pahalgam. Not loud in the way a city is loud. Loud in the way a room is loud when someone you love is sleeping in it.",
@@ -273,6 +285,7 @@ export const posts = [
     read: "6 min",
     category: "Field guide",
     image: img.green,
+    heroImage: img.valley,
     quote: "Aru is not a checklist. It is a meadow, a road, and the decision to stop walking.",
     body: [
       "Aru Valley is a short drive from the resort, up a road that keeps folding back on itself. The climb is gentle enough to keep the window open. Pine gives way to open meadow, and then the valley widens and you are somewhere that feels less like a destination and more like a place someone forgot to build on.",
@@ -291,6 +304,7 @@ export const posts = [
     read: "5 min",
     category: "Philosophy",
     image: img.cabin,
+    heroImage: img.dark,
     quote: "Thirteen is not a number we settled on. It is the number the property could hold without becoming something else.",
     body: [
       "A larger hotel can be many things to many people. It can have three restaurants, a spa, a business centre, a lobby that smells the same in every city. There is nothing wrong with that. It is simply not what this property was built to do.",
@@ -327,7 +341,7 @@ export const faqs = [
   },
   {
     q: "How do I book a stay?",
-    a: "Bookings are direct only — Jade River Resort does not use MakeMyTrip, Booking.com, or any other OTA. Use the contact page to build a WhatsApp message with your room, dates, and guest count, or message +91 9541898820 directly.",
+    a: "Bookings are direct only — Jade River Resort does not use MakeMyTrip, Booking.com, or any other OTA. Use the contact page to send a booking request with your room, dates, and guest count; the team replies by email. You can also message +91 9541898820 on WhatsApp.",
   },
   {
     q: "What is the cancellation policy?",

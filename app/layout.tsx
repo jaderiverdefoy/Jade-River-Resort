@@ -4,6 +4,7 @@ import "./globals.css";
 import PreviewBridge from "@/components/PreviewBridge";
 import SiteChrome from "@/components/SiteChrome";
 import { site } from "@/lib/content";
+import { getRoomsTotal } from "@/lib/cmsContent";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -84,44 +85,49 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "LodgingBusiness",
-  name: "Jade River Resort",
-  description: site.description,
-  url: "https://jaderiverresort.defoy.in",
-  telephone: "+919541898820",
-  email: "jaderiverresort@defoy.in",
-  priceRange: "₹6,000 – ₹13,000",
-  numberOfRooms: 13,
-  parentOrganization: { "@type": "Organization", name: "Defoy Hotels & Resorts" },
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Pahalgam",
-    addressLocality: "Pahalgam",
-    addressRegion: "Jammu & Kashmir",
-    postalCode: "192125",
-    addressCountry: "IN",
-  },
-  geo: { "@type": "GeoCoordinates", latitude: site.lat, longitude: site.lng },
-  amenityFeature: [
-    { "@type": "LocationFeatureSpecification", name: "Riverside setting", value: true },
-    { "@type": "LocationFeatureSpecification", name: "Private balconies", value: true },
-    { "@type": "LocationFeatureSpecification", name: "Bonfire evenings", value: true },
-    { "@type": "LocationFeatureSpecification", name: "Wi-Fi", value: true },
-    { "@type": "LocationFeatureSpecification", name: "Room service", value: true },
-    { "@type": "LocationFeatureSpecification", name: "Family rooms", value: true },
-    { "@type": "LocationFeatureSpecification", name: "Free parking", value: true },
-  ],
-  checkinTime: "14:00",
-  checkoutTime: "12:00",
-};
+function buildJsonLd(roomsTotal: number) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    name: "Jade River Resort",
+    description: site.description,
+    url: "https://jaderiverresort.defoy.in",
+    telephone: "+919541898820",
+    email: "jaderiverresort@defoy.in",
+    priceRange: "₹6,000 – ₹13,000",
+    numberOfRooms: roomsTotal,
+    parentOrganization: { "@type": "Organization", name: "Defoy Hotels & Resorts" },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Pahalgam",
+      addressLocality: "Pahalgam",
+      addressRegion: "Jammu & Kashmir",
+      postalCode: "192125",
+      addressCountry: "IN",
+    },
+    geo: { "@type": "GeoCoordinates", latitude: site.lat, longitude: site.lng },
+    amenityFeature: [
+      { "@type": "LocationFeatureSpecification", name: "Riverside setting", value: true },
+      { "@type": "LocationFeatureSpecification", name: "Private balconies", value: true },
+      { "@type": "LocationFeatureSpecification", name: "Bonfire evenings", value: true },
+      { "@type": "LocationFeatureSpecification", name: "Wi-Fi", value: true },
+      { "@type": "LocationFeatureSpecification", name: "Room service", value: true },
+      { "@type": "LocationFeatureSpecification", name: "Family rooms", value: true },
+      { "@type": "LocationFeatureSpecification", name: "Free parking", value: true },
+    ],
+    checkinTime: "14:00",
+    checkoutTime: "12:00",
+  };
+}
 
 const introScript = `(function(){try{var seen=sessionStorage.getItem('jr-intro');var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(!seen&&!reduce){document.documentElement.setAttribute('data-intro','1');}}catch(e){}})();`;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const roomsTotal = await getRoomsTotal();
+  const jsonLd = buildJsonLd(roomsTotal);
+
   return (
     <html
       lang="en"

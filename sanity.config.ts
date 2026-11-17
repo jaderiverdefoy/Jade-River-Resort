@@ -4,7 +4,7 @@ import { presentationTool } from "sanity/presentation";
 import { structureTool } from "sanity/structure";
 import { PreviewDraftAction } from "./components/studio/PreviewDraftAction";
 import { ApproveReviewAction } from "./components/studio/ApproveReviewAction";
-import { dataset, projectId } from "./sanity/env";
+import { dataset, projectId, apiVersion } from "./sanity/env";
 import { schemaTypes } from "./sanity/schemaTypes";
 
 export default defineConfig({
@@ -24,6 +24,7 @@ export default defineConfig({
               .child(
                 S.documentList()
                   .title("Pending reviews")
+                  .apiVersion(apiVersion)
                   .filter('_type == "review" && status == "pending"')
                   .defaultOrdering([
                     { field: "submittedAt", direction: "desc" },
@@ -34,6 +35,7 @@ export default defineConfig({
               .child(
                 S.documentList()
                   .title("Approved reviews")
+                  .apiVersion(apiVersion)
                   .filter('_type == "review" && status == "approved"')
                   .defaultOrdering([
                     { field: "publishedAt", direction: "desc" },

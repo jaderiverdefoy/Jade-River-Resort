@@ -10,8 +10,8 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { rooms, type Room } from "@/lib/content";
-import { formatPrice } from "@/lib/utils";
+import type { Room } from "@/lib/content";
+import { formatPrice, numberWord } from "@/lib/utils";
 import TiltCard from "@/components/ui/TiltCard";
 
 function RoomCard({ room, index }: { room: Room; index: number }) {
@@ -71,7 +71,13 @@ function RoomCard({ room, index }: { room: Room; index: number }) {
   );
 }
 
-export default function RoomsRail() {
+export default function RoomsRail({
+  rooms,
+  roomsTotal = 13,
+}: {
+  rooms: Room[];
+  roomsTotal?: number;
+}) {
   const section = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const mobileRail = useRef<HTMLDivElement>(null);
@@ -168,12 +174,14 @@ export default function RoomsRail() {
                 data-reveal
                 style={{ ["--reveal-delay" as string]: "70ms" }}
               >
-                Three shapes of <em className="text-clay">quiet.</em>
+                {numberWord(rooms.length)} shapes of{" "}
+                <em className="text-clay">quiet.</em>
               </h3>
             </div>
             <div className="flex items-center gap-6">
               <span className="font-mono text-[11px] tracking-[0.12em] text-paper/65">
-                0{active + 1} <span className="text-paper/65">/ 03</span>
+                0{active + 1}{" "}
+                <span className="text-paper/65">/ {String(rooms.length).padStart(2, "0")}</span>
               </span>
               <Link
                 href="/rooms"
@@ -191,8 +199,8 @@ export default function RoomsRail() {
               className="flex h-full items-center gap-[clamp(1.5rem,3vw,3rem)] pl-[clamp(1.15rem,4.2vw,5rem)] pr-[12vw] will-change-transform"
             >
               <div className="w-[26vw] shrink-0 self-start pt-[6vh]">
-                <p className="font-display text-[clamp(2.6rem,4.5vw,4.5rem)] leading-[0.98] tracking-[-0.04em] text-paper/90">
-                  Thirteen
+                <p className="font-display text-[clamp(2.2rem,3.7vw,3.7rem)] leading-[0.98] tracking-[-0.04em] text-paper/90">
+                  {numberWord(roomsTotal)}
                   <br />
                   rooms.
                   <br />
@@ -256,7 +264,8 @@ export default function RoomsRail() {
             data-reveal
             style={{ ["--reveal-delay" as string]: "60ms" }}
           >
-            Three shapes of <em className="text-clay">quiet.</em>
+            {numberWord(rooms.length)} shapes of{" "}
+            <em className="text-clay">quiet.</em>
           </p>
           <p
             className="mt-5 max-w-[32ch] text-[0.92rem] leading-relaxed text-paper/65"

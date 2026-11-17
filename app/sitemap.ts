@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { rooms } from "@/lib/content";
+import { getRooms } from "@/lib/cmsContent";
 import { getAllPosts } from "@/lib/posts";
 
 const base = "https://jaderiverresort.defoy.in";
@@ -25,6 +25,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === "" ? 1 : 0.8,
   }));
 
+  const [rooms, posts] = await Promise.all([getRooms(), getAllPosts()]);
+
   const roomRoutes = rooms.map((room) => ({
     url: `${base}/rooms/${room.slug}`,
     lastModified: new Date(),
@@ -32,7 +34,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
-  const posts = await getAllPosts();
   const postRoutes = posts.map((post) => ({
     url: `${base}/post/${post.slug}`,
     lastModified: new Date(post.publishedAt),

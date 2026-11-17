@@ -26,7 +26,7 @@ export default function PageHeader({
         <div className="grid gap-10 pt-12 pb-14 md:grid-cols-12 md:pt-20 md:pb-20">
           <div className="md:col-span-8">
             <h1
-              className="text-[clamp(2.9rem,8vw,8rem)] leading-[0.88] tracking-[-0.05em]"
+              className="text-[clamp(2.4rem,6.2vw,6.4rem)] leading-[0.88] tracking-[-0.05em]"
               data-reveal
             >
               {title}

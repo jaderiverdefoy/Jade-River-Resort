@@ -1,10 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
-import { experiences, img } from "@/lib/content";
+import { img } from "@/lib/content";
+import { getExperiences } from "@/lib/cmsContent";
 import { slugify } from "@/lib/utils";
 import { JsonLd, breadcrumb } from "@/lib/schema";
 import { pageMeta } from "@/lib/metadata";
+
+export const revalidate = 300;
 
 export const metadata = pageMeta({
   title: "Experiences — Jade River Resort",
@@ -13,7 +16,9 @@ export const metadata = pageMeta({
   path: "/experiences",
 });
 
-export default function ExperiencesPage() {
+export default async function ExperiencesPage() {
+  const experiences = await getExperiences();
+
   return (
     <>
       <JsonLd
@@ -26,7 +31,7 @@ export default function ExperiencesPage() {
         eyebrow="Experiences · Pahalgam"
         title={
           <>
-            Six ways to do nothing{" "}
+            {experiences.length === 6 ? "Six" : experiences.length} ways to do nothing{" "}
             <em className="text-clay">very well.</em>
           </>
         }
@@ -111,7 +116,7 @@ export default function ExperiencesPage() {
               One more thing
             </span>
             <p
-              className="mt-5 max-w-[22ch] font-display text-[clamp(2rem,4.2vw,4rem)] leading-[1]"
+              className="mt-5 max-w-[22ch] font-display text-[clamp(1.9rem,3.6vw,3.4rem)] leading-[1]"
               data-reveal
             >
               The best thing here is the one we{" "}

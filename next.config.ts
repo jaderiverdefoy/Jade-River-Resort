@@ -14,11 +14,13 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              // core.sanity-cdn.com serves the Studio bridge script; the
+              // Studio also loads auto-updating modules from sanity-cdn.com.
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://sanity-cdn.com https://*.sanity-cdn.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.api.sanity.io wss://*.api.sanity.io https://cdn.sanity.io",
+              "connect-src 'self' https://*.api.sanity.io wss://*.api.sanity.io https://cdn.sanity.io https://sanity-cdn.com https://*.sanity-cdn.com",
               "media-src 'self'",
               "frame-src 'self' https://www.google.com https://www.google.com/maps",
               "object-src 'none'",

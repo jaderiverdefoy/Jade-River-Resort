@@ -23,7 +23,8 @@ export async function generateMetadata({
 
   const title = post.seo?.metaTitle || post.title;
   const description = post.seo?.metaDescription || post.excerpt;
-  const image = post.seo?.ogImage || post.image;
+  // Social cards still need an image even when the article has no hero.
+  const image = post.seo?.ogImage || post.heroImage || post.image;
 
   const metadata: Metadata = {
     title,
@@ -38,7 +39,7 @@ export async function generateMetadata({
       title,
       description,
       publishedTime: post.publishedAt,
-      images: [{ url: image, width: 1200, height: 630, alt: post.imageAlt }],
+      images: [{ url: image, width: 1200, height: 630, alt: post.heroImageAlt }],
     },
     twitter: {
       card: "summary_large_image",
@@ -83,7 +84,7 @@ export default async function PostPage({
             "@type": "BlogPosting",
             headline: post.title,
             description: post.excerpt,
-            image: post.seo?.ogImage || post.image,
+            image: post.seo?.ogImage || post.heroImage || post.image,
             datePublished: post.publishedAt,
             dateModified: post.publishedAt,
             author: {
@@ -97,56 +98,61 @@ export default async function PostPage({
       />
 
       <article className="pt-[68px] md:pt-[80px]">
-        <header className="shell">
-          <div className="flex items-center justify-between gap-4 border-b border-line py-5">
-            <div className="flex items-center gap-5">
-              <Link href="/post" className="eyebrow text-ink/65 hover:text-ink">
+        <header className="relative isolate w-full overflow-hidden bg-walnut">
+          {post.heroImage ? (
+            <>
+              <Image
+                src={post.heroImage}
+                alt={post.heroImageAlt}
+                title={post.heroImageAlt}
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover object-center"
+              />
+              {/* Keeps the title legible over any photo. */}
+              <div
+                className="absolute inset-0 bg-gradient-to-t from-walnut/90 via-walnut/60 to-walnut/45"
+                aria-hidden="true"
+              />
+            </>
+          ) : null}
+
+          <div className="shell relative flex min-h-[clamp(19rem,46svh,34rem)] flex-col justify-between gap-12 py-8 md:py-10">
+            <div className="flex items-center">
+              <Link
+                href="/post"
+                className="eyebrow text-paper/75 transition-colors hover:text-paper"
+              >
                 Blog
               </Link>
             </div>
-            <span className="eyebrow hidden shrink-0 text-ink/65 sm:inline">{post.category}</span>
-          </div>
 
-          <div className="grid gap-8 pt-12 pb-10 md:grid-cols-12 md:pt-16">
-            <div className="md:col-span-9">
-              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/65">
-                {post.date} · {post.read} read
-                {post.author ? ` · ${post.author}` : ""}
-              </p>
+            <div className="mx-auto flex w-fit max-w-[54rem] flex-col items-start">
+              <p className="eyebrow text-paper/70">{post.category}</p>
               <h1
-                className="mt-5 text-[clamp(2.6rem,6.4vw,6.4rem)] leading-[0.92] tracking-[-0.05em]"
+                className="mt-4 w-full text-left text-[clamp(2rem,4vw,4rem)] leading-[1.02] tracking-[-0.03em] text-paper"
                 data-reveal
               >
                 {post.title}
               </h1>
               <h2 className="sr-only">The full note — {post.title}</h2>
             </div>
-            <p
-              className="self-end font-display text-[1.1rem] leading-snug text-ink/65 md:col-span-3"
-              data-reveal
-              style={{ ["--reveal-delay" as string]: "120ms" }}
-            >
-              {post.excerpt}
-            </p>
           </div>
         </header>
 
         <div className="shell">
-          <div className="relative aspect-[16/9] overflow-hidden bg-paper-2" data-reveal="mask">
-            <Image
-              src={post.image}
-              alt={post.imageAlt}
-                title={post.imageAlt}
-              width={1600}
-              height={900}
-              priority
-              sizes="100vw"
-              className="absolute inset-0 h-full w-full reveal-media object-cover"
-            />
+          <div className="mx-auto flex max-w-[68ch] flex-wrap items-center justify-between gap-3 border-b border-line py-5">
+            <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/65">
+              {post.author || "Jade River Resort"}
+            </p>
+            <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/65">
+              {post.date} · {post.read} read
+            </p>
           </div>
         </div>
 
-        <div className="shell py-14 md:py-20">
+        <div className="shell py-10 md:py-12">
           <div className="mx-auto max-w-[68ch]">
             {post.portableBody ? (
               <PostBody value={post.portableBody} />
@@ -199,7 +205,7 @@ export default async function PostPage({
                 href={`/post/${next.slug}`}
                 className="group mt-4 flex items-end justify-between gap-6"
               >
-                <p className="max-w-[18ch] font-display text-[clamp(1.8rem,4vw,4rem)] leading-[0.98] transition-colors duration-500 group-hover:text-clay">
+                <p className="max-w-[18ch] font-display text-[clamp(1.6rem,3.3vw,3.2rem)] leading-[0.98] transition-colors duration-500 group-hover:text-clay">
                   {next.title}
                 </p>
                 <span className="mb-2 text-3xl">

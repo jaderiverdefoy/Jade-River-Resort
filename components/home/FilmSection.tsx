@@ -82,7 +82,7 @@ export default function FilmSection() {
         <div className="relative z-10 flex w-full flex-col gap-6 p-[clamp(1.15rem,4.2vw,5rem)] pb-10 md:flex-row md:items-end md:justify-between">
           <h3
             id="film-heading"
-            className="font-bold max-w-[13ch] text-[clamp(2.4rem,5.4vw,5.2rem)] leading-[0.94] text-paper"
+            className="font-bold max-w-[13ch] text-[clamp(2.1rem,4.3vw,4.1rem)] leading-[0.94] text-paper"
             data-reveal
           >
             The property, <em className="text-paper/70">in motion.</em>

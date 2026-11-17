@@ -9,8 +9,11 @@ import GuestNotes from "@/components/home/GuestNotes";
 import BlogTeaser from "@/components/home/BlogTeaser";
 import ClosingCTA from "@/components/home/ClosingCTA";
 import { getDisplayReviews } from "@/lib/googleReviews";
+import { getExperiences, getGallery, getRooms, getRoomsTotal } from "@/lib/cmsContent";
 
 import { pageMeta } from "@/lib/metadata";
+
+export const revalidate = 300;
 
 export const metadata = pageMeta({
   title: "Jade River Resort — Life, Slowed by the River",
@@ -20,20 +23,27 @@ export const metadata = pageMeta({
 });
 
 export default async function HomePage() {
-  const { reviews, mapsUrl } = await getDisplayReviews();
+  const [{ reviews, mapsUrl }, rooms, roomsTotal, experiences, gallery] =
+    await Promise.all([
+      getDisplayReviews(),
+      getRooms(),
+      getRoomsTotal(),
+      getExperiences(),
+      getGallery(),
+    ]);
 
   return (
     <>
-      <Hero />
-      <Philosophy />
-      <RoomsRail />
-      <Experiences />
-      <GalleryMarquee />
+      <Hero roomsTotal={roomsTotal} />
+      <Philosophy roomsTotal={roomsTotal} />
+      <RoomsRail rooms={rooms} roomsTotal={roomsTotal} />
+      <Experiences experiences={experiences} />
+      <GalleryMarquee items={gallery} />
       {/* <FilmSection /> */}
       <LocationSection />
-      <GuestNotes reviews={reviews} googleMapsUrl={mapsUrl} />
+      <GuestNotes reviews={reviews} googleMapsUrl={mapsUrl} roomsTotal={roomsTotal} />
       <BlogTeaser />
-      <ClosingCTA />
+      <ClosingCTA roomsTotal={roomsTotal} />
     </>
   );
 }

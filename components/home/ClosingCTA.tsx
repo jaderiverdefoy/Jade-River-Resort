@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { site } from "@/lib/content";
+import { numberWord } from "@/lib/utils";
 
-export default function ClosingCTA() {
+export default function ClosingCTA({ roomsTotal = 13 }: { roomsTotal?: number }) {
   return (
     <section
       className="relative overflow-hidden bg-paper-2 text-ink"
@@ -15,7 +16,7 @@ export default function ClosingCTA() {
             </span>
             <h3
               id="cta-heading"
-              className="font-bold mt-5 text-[clamp(3.2rem,10vw,9.6rem)] leading-[0.86] tracking-[-0.05em]"
+              className="font-bold mt-5 text-[clamp(2.7rem,8vw,7.6rem)] leading-[0.86] tracking-[-0.05em]"
               data-reveal
             >
               Come
@@ -26,7 +27,7 @@ export default function ClosingCTA() {
 
           <div className="md:col-span-4">
             <p className="max-w-[30ch] text-[1rem] leading-[1.7] text-ink/75" data-reveal>
-              Thirteen rooms. One river. A direct line to the people who actually
+              {numberWord(roomsTotal)} rooms. One river. A direct line to the people who actually
               run the place — no booking engines in between.
             </p>
 

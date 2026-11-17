@@ -16,7 +16,7 @@ export default async function BlogTeaser() {
             </span>
             <h3
               id="blog-heading"
-              className="font-bold mt-4 text-[clamp(2.3rem,5.2vw,5rem)] leading-[0.94]"
+              className="font-bold mt-4 text-[clamp(2.1rem,4.2vw,4.1rem)] leading-[0.94]"
               data-reveal
             >
               Notes from the <em className="text-clay">slow side.</em>

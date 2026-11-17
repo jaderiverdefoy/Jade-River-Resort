@@ -12,6 +12,15 @@ export const wrap = (min: number, max: number, v: number) => {
   return ((((v - min) % range) + range) % range) + min;
 };
 
+const NUMBER_WORDS = [
+  "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
+  "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
+  "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty",
+];
+
+/** 13 → "Thirteen". Falls back to the numeral above twenty. */
+export const numberWord = (n: number) => NUMBER_WORDS[n] ?? String(n);
+
 export const formatPrice = (n: number) =>
   new Intl.NumberFormat("en-IN", {
     style: "currency",

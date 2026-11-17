@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { rooms, site } from "@/lib/content";
+import { useRouter } from "next/navigation";
+import { site, type Room } from "@/lib/content";
 import { formatPrice } from "@/lib/utils";
 
 /**
@@ -11,10 +12,24 @@ import { formatPrice } from "@/lib/utils";
  * duplicate, crawlable URLs are created (the crawl flagged the old
  * `?room=` variants). Legacy `?room=` links still work on load, but we no
  * longer generate them anywhere.
+ *
+ * Submitting posts to /api/booking, which forwards the request to a Google
+ * Apps Script web app. That script emails the resort team and replies with a
+ * JSON acknowledgement; the browser then lands on /thank-you.
  */
-export default function BookingForm({ initialRoom }: { initialRoom?: string }) {
-  const initial =
-    rooms.some((r) => r.slug === initialRoom) ? initialRoom! : rooms[0].slug;
+export default function BookingForm({
+  rooms,
+  initialRoom,
+}: {
+  rooms: Room[];
+  initialRoom?: string;
+}) {
+  const router = useRouter();
+
+  const fallbackRoom = rooms[0]?.slug ?? "";
+  const initial = rooms.some((r) => r.slug === initialRoom)
+    ? initialRoom!
+    : fallbackRoom;
 
   const [room, setRoom] = useState(initial);
 
@@ -32,16 +47,23 @@ export default function BookingForm({ initialRoom }: { initialRoom?: string }) {
     apply();
     window.addEventListener("hashchange", apply);
     return () => window.removeEventListener("hashchange", apply);
-  }, []);
+  }, [rooms]);
+
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [checkin, setCheckin] = useState("");
   const [checkout, setCheckout] = useState("");
   const [guests, setGuests] = useState("2");
   const [notes, setNotes] = useState("");
+  const [company, setCompany] = useState("");
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const selected = rooms.find((r) => r.slug === room) ?? rooms[0];
 
   const message = useMemo(() => {
+    if (!selected) return "";
     const lines = [
       `Hello Jade River Resort, I would like to enquire about a stay.`,
       ``,
@@ -59,14 +81,101 @@ export default function BookingForm({ initialRoom }: { initialRoom?: string }) {
 
   const href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(message)}`;
 
+  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (sending) return;
+
+    setError(null);
+
+    if (name.trim().length < 2) {
+      setError("Please add your name.");
+      return;
+    }
+    if (!email.trim() && !phone.trim()) {
+      setError("Please add an email address or a phone number so we can reply.");
+      return;
+    }
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) {
+      setError("That email address does not look right.");
+      return;
+    }
+    if (checkin && checkout && checkout < checkin) {
+      setError("Check-out cannot be before check-in.");
+      return;
+    }
+
+    setSending(true);
+
+    try {
+      const response = await fetch("/api/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          room: room,
+          checkin,
+          checkout,
+          guests,
+          notes,
+          company,
+        }),
+      });
+
+      const payload = (await response.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
+
+      if (!response.ok || !payload.ok) {
+        throw new Error(
+          payload.error ||
+            "We could not send the request. Please try WhatsApp or call us.",
+        );
+      }
+
+      try {
+        sessionStorage.setItem(
+          "jr-booking",
+          JSON.stringify({
+            room: selected?.name,
+            roomSlug: selected?.slug,
+            checkin,
+            checkout,
+            guests,
+          }),
+        );
+      } catch {
+        // Storage can be blocked; the thank-you page has a generic fallback.
+      }
+
+      router.push(`/thank-you#room=${encodeURIComponent(room)}`);
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "We could not send the request. Please try again.",
+      );
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (!selected) {
+    return (
+      <p className="body-copy">
+        Room details are being updated. Please message us on WhatsApp at{" "}
+        <a href={site.phoneHref} className="link-line">
+          {site.phone}
+        </a>
+        .
+      </p>
+    );
+  }
+
   return (
-    <form
-      className="grid gap-8"
-      onSubmit={(e) => {
-        e.preventDefault();
-        window.open(href, "_blank", "noopener,noreferrer");
-      }}
-    >
+    <form className="grid gap-8" onSubmit={submit} noValidate>
       <fieldset className="grid gap-3">
         <legend className="eyebrow mb-1 text-ink/65">01 — Choose a room</legend>
         <div className="grid gap-2">
@@ -122,16 +231,19 @@ export default function BookingForm({ initialRoom }: { initialRoom?: string }) {
         <Field label="02 — Your name" htmlFor="name">
           <input
             id="name"
+            name="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Full name"
             autoComplete="name"
+            required
             className="w-full bg-transparent py-3 text-[1rem] outline-none placeholder:text-ink/65"
           />
         </Field>
         <Field label="03 — Guests" htmlFor="guests">
           <select
             id="guests"
+            name="guests"
             value={guests}
             onChange={(e) => setGuests(e.target.value)}
             className="w-full appearance-none bg-transparent py-3 text-[1rem] outline-none"
@@ -143,18 +255,44 @@ export default function BookingForm({ initialRoom }: { initialRoom?: string }) {
             ))}
           </select>
         </Field>
-        <Field label="04 — Check-in (optional)" htmlFor="checkin">
+        <Field label="04 — Email" htmlFor="email">
+          <input
+            id="email"
+            name="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            autoComplete="email"
+            className="w-full bg-transparent py-3 text-[1rem] outline-none placeholder:text-ink/65"
+          />
+        </Field>
+        <Field label="05 — Phone or WhatsApp" htmlFor="phone">
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+91 …"
+            autoComplete="tel"
+            className="w-full bg-transparent py-3 text-[1rem] outline-none placeholder:text-ink/65"
+          />
+        </Field>
+        <Field label="06 — Check-in (optional)" htmlFor="checkin">
           <input
             id="checkin"
+            name="checkin"
             type="date"
             value={checkin}
             onChange={(e) => setCheckin(e.target.value)}
             className="w-full bg-transparent py-3 text-[1rem] outline-none"
           />
         </Field>
-        <Field label="05 — Check-out (optional)" htmlFor="checkout">
+        <Field label="07 — Check-out (optional)" htmlFor="checkout">
           <input
             id="checkout"
+            name="checkout"
             type="date"
             value={checkout}
             onChange={(e) => setCheckout(e.target.value)}
@@ -163,9 +301,10 @@ export default function BookingForm({ initialRoom }: { initialRoom?: string }) {
         </Field>
       </div>
 
-      <Field label="06 — Anything we should know" htmlFor="notes">
+      <Field label="08 — Anything we should know" htmlFor="notes">
         <textarea
           id="notes"
+          name="notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}
@@ -174,28 +313,61 @@ export default function BookingForm({ initialRoom }: { initialRoom?: string }) {
         />
       </Field>
 
+      {/* Hidden from people, irresistible to bots. */}
+      <div className="hidden" aria-hidden="true">
+        <label htmlFor="company">Company</label>
+        <input
+          id="company"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+        />
+      </div>
+
       <div className="border-t border-line pt-6">
-        <p className="eyebrow text-ink/65">Your message</p>
+        <p className="eyebrow text-ink/65">Your request</p>
         <pre className="mt-3 whitespace-pre-wrap font-mono text-[11px] leading-[1.8] text-ink/70">
           {message}
         </pre>
       </div>
 
+      {error ? (
+        <p
+          role="alert"
+          className="border border-clay/40 bg-clay/5 px-4 py-3 text-[0.9rem] leading-relaxed text-ink"
+        >
+          {error}{" "}
+          <a href={href} target="_blank" rel="noopener noreferrer" className="link-line text-walnut">
+            Send it on WhatsApp instead →
+          </a>
+        </p>
+      ) : null}
+
       <div className="flex flex-wrap items-center gap-5">
-        <button type="submit" className="btn btn-clay">
-          Send on WhatsApp
+        <button type="submit" className="btn btn-clay disabled:opacity-60" disabled={sending}>
+          {sending ? "Sending…" : "Send booking request"}
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" className="arrow-static">
             <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" strokeWidth="1.2" />
           </svg>
         </button>
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="link-line font-mono text-[10px] uppercase tracking-[0.2em]"
+        >
+          Or send on WhatsApp
+        </a>
         <a href={site.phoneHref} className="link-line font-mono text-[10px] uppercase tracking-[0.2em]">
-          Or call {site.phone}
+          Call {site.phone}
         </a>
       </div>
 
       <p className="max-w-lg font-mono text-[9px] uppercase leading-[1.9] tracking-[0.16em] text-ink/65">
         Direct booking only. A 50% advance confirms the stay. Check-in 2:00 PM,
-        check-out 12:00 noon. Cancellation within 10 days carries 100% retention.
+        check-out 12:00 noon. We reply from {site.email}.
       </p>
     </form>
   );

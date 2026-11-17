@@ -14,10 +14,10 @@ import {
   useTransform,
   useVelocity,
 } from "framer-motion";
-import { gallery } from "@/lib/content";
+import type { GalleryItem } from "@/lib/content";
 import { wrap } from "@/lib/utils";
 
-type Item = (typeof gallery)[number];
+type Item = GalleryItem;
 
 function Row({
   items,
@@ -96,9 +96,10 @@ function Row({
   );
 }
 
-export default function GalleryMarquee() {
-  const rowA = gallery.slice(0, 6);
-  const rowB = gallery.slice(6, 12);
+export default function GalleryMarquee({ items }: { items: GalleryItem[] }) {
+  const half = Math.ceil(items.length / 2);
+  const rowA = items.slice(0, half);
+  const rowB = items.slice(half);
 
   return (
     <section className="relative overflow-hidden py-20 md:py-28" aria-labelledby="gallery-heading">
@@ -110,7 +111,7 @@ export default function GalleryMarquee() {
             </span>
             <h3
               id="gallery-heading"
-              className="font-bold mt-4 text-[clamp(2.3rem,5.6vw,5.4rem)] leading-[0.94]"
+              className="font-bold mt-4 text-[clamp(2.1rem,4.5vw,4.3rem)] leading-[0.94]"
               data-reveal
             >
               Frames the valley <em className="text-clay">already made.</em>

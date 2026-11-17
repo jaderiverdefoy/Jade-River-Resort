@@ -34,7 +34,7 @@ export default function LocationSection() {
             </span>
             <h3
               id="location-heading"
-              className="font-bold mt-4 text-[clamp(2.3rem,4.8vw,4.6rem)] leading-[0.95]"
+              className="font-bold mt-4 text-[clamp(2rem,4vw,3.9rem)] leading-[0.95]"
               data-reveal
             >
               The road ends. <em className="text-clay">The river keeps going.</em>

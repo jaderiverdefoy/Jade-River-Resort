@@ -32,6 +32,7 @@ export const latestPostsQuery = groq`
 export const postBySlugQuery = groq`
   *[_type == "post" && slug.current == $slug && !(_id in path("drafts.**"))][0] {
     ${listFields},
+    heroImage { asset, alt },
     body,
     author-> { name, role, image, bio },
     seo,
@@ -52,6 +53,7 @@ export const postBySlugQuery = groq`
 export const draftPostBySlugQuery = groq`
   *[_type == "post" && slug.current == $slug][0] {
     ${listFields},
+    heroImage { asset, alt },
     body,
     author-> { name, role, image, bio },
     seo,
@@ -68,6 +70,54 @@ export const draftPostBySlugQuery = groq`
     }
   }
 `;
+
+/**
+ * Rooms, gallery and experiences are optional CMS-managed content. Each query
+ * returns an empty list when nothing has been published, which lets the site
+ * fall back to the built-in content in `lib/content.ts`.
+ */
+export const roomsQuery = groq`
+  *[_type == "room" && active != false && defined(slug.current) && !(_id in path("drafts.**"))]
+  | order(coalesce(order, 9999) asc, name asc) {
+    _id,
+    name,
+    "slug": slug.current,
+    short,
+    units,
+    countLabel,
+    price,
+    description,
+    long,
+    note,
+    metaDescription,
+    bestFor,
+    amenities,
+    mainImage { asset, alt },
+    gallery[] { asset, alt }
+  }
+`;
+
+export const galleryImagesQuery = groq`
+  *[_type == "galleryImage" && active != false && defined(image.asset) && !(_id in path("drafts.**"))]
+  | order(coalesce(order, 9999) asc, _createdAt asc) {
+    _id,
+    span,
+    image { asset, alt }
+  }
+`;
+
+export const experiencesQuery = groq`
+  *[_type == "experience" && active != false && defined(image.asset) && !(_id in path("drafts.**"))]
+  | order(coalesce(order, 9999) asc, _createdAt asc) {
+    _id,
+    title,
+    subtitle,
+    body,
+    meta,
+    image { asset, alt }
+  }
+`;
+
 
 export const allSlugsQuery = groq`
   *[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)]

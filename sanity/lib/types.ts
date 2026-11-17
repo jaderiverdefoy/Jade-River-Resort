@@ -33,11 +33,45 @@ export type SanityPostListItem = {
 };
 
 export type SanityPost = SanityPostListItem & {
+  heroImage?: SanityImage | null;
   body?: PortableTextBlock[] | null;
   author?: { name: string; role?: string; image?: SanityImage | null; bio?: string } | null;
   seo?: SanitySeo | null;
   articleType?: string;
   relatedPosts?: SanityPostListItem[] | null;
+};
+
+export type SanityRoom = {
+  _id: string;
+  name: string;
+  slug: string;
+  short: string;
+  units?: number;
+  countLabel?: string;
+  price: number;
+  description: string;
+  long: string;
+  note: string;
+  metaDescription: string;
+  bestFor: string;
+  amenities?: string[];
+  mainImage?: SanityImage | null;
+  gallery?: SanityImage[] | null;
+};
+
+export type SanityGalleryImage = {
+  _id: string;
+  span?: "wide" | "std" | "tall";
+  image?: SanityImage | null;
+};
+
+export type SanityExperience = {
+  _id: string;
+  title: string;
+  subtitle: string;
+  body: string;
+  meta: string;
+  image?: SanityImage | null;
 };
 
 export type SanityReview = {

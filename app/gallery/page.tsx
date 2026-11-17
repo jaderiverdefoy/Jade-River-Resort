@@ -1,9 +1,11 @@
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import GalleryGrid from "@/components/GalleryGrid";
-import { gallery } from "@/lib/content";
+import { getGallery } from "@/lib/cmsContent";
 import { JsonLd, breadcrumb } from "@/lib/schema";
 import { pageMeta } from "@/lib/metadata";
+
+export const revalidate = 300;
 
 export const metadata = pageMeta({
   title: "Gallery — photographs of Jade River Resort",
@@ -12,7 +14,9 @@ export const metadata = pageMeta({
   path: "/gallery",
 });
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const gallery = await getGallery();
+
   return (
     <>
       <JsonLd
@@ -55,7 +59,7 @@ export default function GalleryPage() {
           that day. Bring binoculars for the birds, and ignore the ones that
           pretend to be tame.
         </p>
-        <GalleryGrid />
+        <GalleryGrid items={gallery} />
       </section>
 
       <section className="border-t border-line py-14" data-reveal="zoom">

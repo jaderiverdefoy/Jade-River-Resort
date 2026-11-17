@@ -6,15 +6,21 @@ import { stats } from "@/lib/content";
 import type { Review } from "@/lib/googleReviews";
 import CountUp from "@/components/ui/CountUp";
 import ReviewText from "@/components/ReviewText";
+import { numberWord } from "@/lib/utils";
 
 export default function GuestNotes({
   reviews,
   googleMapsUrl,
+  roomsTotal = 13,
 }: {
   reviews: Review[];
   googleMapsUrl?: string | null;
+  roomsTotal?: number;
 }) {
   const rail = useRef<HTMLDivElement>(null);
+  const statList = stats.map((stat) =>
+    stat.label === "Rooms, no more" ? { ...stat, value: roomsTotal } : stat,
+  );
 
   const nudge = (dir: 1 | -1) => {
     rail.current?.scrollBy({ left: dir * 380, behavior: "smooth" });
@@ -30,27 +36,27 @@ export default function GuestNotes({
             </span>
             <h3
               id="reviews-heading"
-              className="font-bold mt-4 text-[clamp(2.3rem,5.2vw,5rem)] leading-[0.94]"
+              className="font-bold mt-4 text-[clamp(2.1rem,4.2vw,4.1rem)] leading-[0.94]"
               data-reveal
             >
               Small numbers. <em className="text-clay">That’s the point.</em>
             </h3>
           </div>
           <p className="body-copy max-w-sm text-paper/80 md:col-span-4 md:col-start-9" data-reveal>
-            Thirteen rooms, a handful of staff, and guests who tend to stay longer
+            {numberWord(roomsTotal)} rooms, a handful of staff, and guests who tend to stay longer
             than they planned. These are their notes.
           </p>
         </div>
 
         <div className="mt-14 grid grid-cols-2 gap-y-10 border-y border-line-light py-10 md:grid-cols-4 md:gap-6">
-          {stats.map((s, i) => (
+          {statList.map((s, i) => (
             <div
               key={s.label}
               className="md:border-l md:border-line-light md:pl-6 md:first:border-l-0 md:first:pl-0"
               data-reveal="zoom"
               style={{ ["--reveal-delay" as string]: `${i * 80}ms` }}
             >
-              <p className="font-display text-[clamp(2.6rem,4.6vw,4.6rem)] leading-none tracking-[-0.04em]">
+              <p className="font-display text-[clamp(2.2rem,3.8vw,3.8rem)] leading-none tracking-[-0.04em]">
                 <CountUp value={s.value} suffix={s.suffix} />
               </p>
               <p className="mt-3 font-mono text-[9px] uppercase tracking-[0.18em] text-paper/65">

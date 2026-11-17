@@ -4,7 +4,7 @@ import { site } from "@/lib/content";
 const copy =
   "Pahalgam is not a place you rush. The Lidder has run this valley longer than any of us. Thirteen rooms beside it — wooden walls, amber light, pine behind, water in front.";
 
-export default function Philosophy() {
+export default function Philosophy({ roomsTotal = 13 }: { roomsTotal?: number }) {
   return (
     <section className="relative pt-6 md:pt-10">
       <RiverDivider className="text-ink/65" height={84} />
@@ -32,7 +32,7 @@ export default function Philosophy() {
                 </div>
                 <div className="flex justify-between gap-6 border-b border-line pb-2">
                   <dt>Rooms</dt>
-                  <dd>13</dd>
+                  <dd>{roomsTotal}</dd>
                 </div>
               </dl>
             </div>
@@ -40,7 +40,7 @@ export default function Philosophy() {
 
           <div className="md:col-span-9 md:col-start-4">
             <h2
-              className="max-w-[16ch] text-[clamp(2.1rem,4.8vw,4.3rem)] leading-[0.98]"
+              className="max-w-[16ch] text-[clamp(1.9rem,4vw,3.6rem)] leading-[0.98]"
               data-reveal
             >
               A resort built around a river,{" "}

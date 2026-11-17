@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { img, site } from "@/lib/content";
+import { numberWord } from "@/lib/utils";
 
 const lines = [
   { text: "Life,", emphasis: false },
@@ -12,7 +13,7 @@ const lines = [
   { text: "the river.", emphasis: false },
 ];
 
-export default function Hero() {
+export default function Hero({ roomsTotal = 13 }: { roomsTotal?: number }) {
   const ref = useRef<HTMLElement>(null);
   const [ready, setReady] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
@@ -48,7 +49,7 @@ export default function Hero() {
           Life, slowed by the river
         </p>
         <p className="eyebrow text-ink/70">
-          <span className="text-walnut">13</span> rooms
+          <span className="text-walnut">{roomsTotal}</span> rooms
         </p>
       </div> */}
 
@@ -114,7 +115,7 @@ export default function Hero() {
               <h1
                 className="text-paper"
                 style={{
-                  fontSize: "clamp(3.3rem, 10.4vw, 10.2rem)",
+                  fontSize: "clamp(2.7rem, 8.6vw, 8.3rem)",
                   lineHeight: 0.88,
                 }}
               >
@@ -178,7 +179,7 @@ export default function Hero() {
           data-reveal
           style={{ ["--reveal-delay" as string]: "90ms" }}
         >
-          A boutique property of thirteen rooms on the banks of the Lidder River.
+          A boutique property of {numberWord(roomsTotal).toLowerCase()} rooms on the banks of the Lidder River.
           Not a hotel to tick off. A place to stay longer than you planned.
         </p>
         <a

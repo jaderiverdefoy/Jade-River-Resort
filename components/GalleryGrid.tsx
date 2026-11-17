@@ -3,18 +3,18 @@
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { gallery } from "@/lib/content";
+import type { GalleryItem } from "@/lib/content";
 
-export default function GalleryGrid() {
+export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
   const [index, setIndex] = useState<number | null>(null);
 
   const close = useCallback(() => setIndex(null), []);
   const next = useCallback(
-    () => setIndex((i) => (i === null ? null : (i + 1) % gallery.length)),
+    () => setIndex((i) => (i === null ? null : (i + 1) % items.length)),
     [],
   );
   const prev = useCallback(
-    () => setIndex((i) => (i === null ? null : (i - 1 + gallery.length) % gallery.length)),
+    () => setIndex((i) => (i === null ? null : (i - 1 + items.length) % items.length)),
     [],
   );
 
@@ -37,7 +37,7 @@ export default function GalleryGrid() {
   return (
     <>
       <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 [&>*]:mb-4">
-        {gallery.map((item, i) => (
+        {items.map((item, i) => (
           <button
             key={item.src + i}
             type="button"
@@ -94,7 +94,7 @@ export default function GalleryGrid() {
           >
             <div className="flex items-center justify-between px-5 py-5">
               <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/65">
-                {String(index + 1).padStart(2, "0")} / {String(gallery.length).padStart(2, "0")}
+                {String(index + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
               </span>
               <button
                 type="button"
@@ -118,9 +118,9 @@ export default function GalleryGrid() {
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               >
                 <Image
-                  src={gallery[index].src}
-                  alt={gallery[index].alt}
-                title={gallery[index].alt}
+                  src={items[index].src}
+                  alt={items[index].alt}
+                title={items[index].alt}
                   width={1600}
                   height={900}
                   sizes="100vw"
@@ -133,7 +133,7 @@ export default function GalleryGrid() {
 
             <div className="flex items-center justify-between gap-6 border-t border-paper/15 px-5 py-5">
               <p className="max-w-[50ch] font-mono text-[9px] uppercase leading-relaxed tracking-[0.16em] text-paper/70">
-                {gallery[index].alt}
+                {items[index].alt}
               </p>
               <div className="flex gap-2">
                 <button

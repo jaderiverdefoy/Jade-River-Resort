@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { rooms, site } from "@/lib/content";
+import { site } from "@/lib/content";
+import { getRooms } from "@/lib/cmsContent";
 import { formatPrice } from "@/lib/utils";
 import { JsonLd, breadcrumb } from "@/lib/schema";
 import RoomHero from "@/components/rooms/RoomHero";
 
-export function generateStaticParams() {
+export const revalidate = 300;
+
+export async function generateStaticParams() {
+  const rooms = await getRooms();
   return rooms.map((room) => ({ slug: room.slug }));
 }
 
@@ -17,6 +21,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const rooms = await getRooms();
   const room = rooms.find((r) => r.slug === slug);
   if (!room) return { title: "Room not found" };
   return {
@@ -47,6 +52,7 @@ export default async function RoomPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const rooms = await getRooms();
   const room = rooms.find((r) => r.slug === slug);
   if (!room) notFound();
 

@@ -41,6 +41,28 @@ export async function POST(request: NextRequest) {
       revalidatePath("/");
     }
 
+    // Rooms, gallery photographs and experiences are cached with the
+    // "content" tag. Revalidate every page that renders them, including the
+    // dynamic room route so new/removed room types are picked up.
+    if (
+      body?._type === "room" ||
+      body?._type === "galleryImage" ||
+      body?._type === "experience"
+    ) {
+      revalidateTag("content");
+      revalidatePath("/");
+      revalidatePath("/rooms");
+      revalidatePath("/gallery");
+      revalidatePath("/experiences");
+      revalidatePath("/contact");
+      revalidatePath("/sitemap.xml");
+      revalidatePath("/rooms/[slug]", "page");
+
+      if (body?._type === "room" && body.slug?.current) {
+        revalidatePath(`/rooms/${body.slug.current}`);
+      }
+    }
+
     return Response.json({ revalidated: true, now: Date.now() });
   } catch (error) {
     return new Response(

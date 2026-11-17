@@ -2,8 +2,11 @@ import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import RoomShowcase from "@/components/rooms/RoomShowcase";
 import { JsonLd, breadcrumb } from "@/lib/schema";
-import { rooms } from "@/lib/content";
+import { getRooms, getRoomsTotal } from "@/lib/cmsContent";
 import { pageMeta } from "@/lib/metadata";
+import { numberWord } from "@/lib/utils";
+
+export const revalidate = 300;
 
 export const metadata = pageMeta({
   title: "Rooms & Suites — Jade River Resort, Pahalgam",
@@ -12,7 +15,9 @@ export const metadata = pageMeta({
   path: "/rooms",
 });
 
-export default function RoomsPage() {
+export default async function RoomsPage() {
+  const [rooms, total] = await Promise.all([getRooms(), getRoomsTotal()]);
+
   return (
     <>
       <JsonLd
@@ -22,12 +27,13 @@ export default function RoomsPage() {
         ])}
       />
       <PageHeader
-        eyebrow="Stay · 13 rooms"
+        eyebrow={`Stay · ${total} rooms`}
         title={
           <>
-            Thirteen rooms.
+            {total === 13 ? "Thirteen" : total} rooms.
             <br />
-            Three ways to <em className="text-clay">slow down.</em>
+            {numberWord(rooms.length)} ways to{" "}
+            <em className="text-clay">slow down.</em>
           </>
         }
         intro="Nine balcony rooms, two suites, two duplex family rooms. Each one opens toward the water or the pines, and none of them are in a hurry."
@@ -45,7 +51,7 @@ export default function RoomsPage() {
       />
 
       <h2 className="sr-only">Rooms and suites at Jade River Resort, Pahalgam</h2>
-      <RoomShowcase />
+      <RoomShowcase rooms={rooms} />
 
       <section className="bg-forest py-16 text-paper md:py-20" data-reveal="zoom">
         <div className="shell grid gap-10 md:grid-cols-12 md:items-center">
