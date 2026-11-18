@@ -38,6 +38,11 @@ export default function BookingPopup() {
   // Only a deliberate click on "Reserve" should pull focus into the name
   // field — auto-opening must not pop the mobile keyboard.
   const focusOnOpen = useRef(false);
+  // Guards the backdrop against a stray tap that started before the popup
+  // appeared (common on phones: tap-and-scroll, popup opens, the tail of that
+  // gesture lands on the overlay and closes it immediately).
+  const openedAt = useRef(0);
+  const autoOpened = useRef(false);
 
   const [open, setOpen] = useState(false);
   const [room, setRoom] = useState<(typeof ROOM_OPTIONS)[number]>("Executive Suite");
@@ -57,20 +62,40 @@ export default function BookingPopup() {
   // on the home page. The timer only runs on mount, so closing the popup does
   // not make it pop back up during the same visit.
   useEffect(() => {
+    const mountedAt = Date.now();
+
     const onOpen = () => {
       focusOnOpen.current = true;
       setOpen(true);
     };
     window.addEventListener(OPEN_BOOKING_EVENT, onOpen);
-    const timer = window.setTimeout(() => setOpen(true), AUTO_OPEN_MS);
+
+    // Mobile browsers suspend timers in background tabs, and some in-app
+    // browsers (Instagram, Facebook) delay them until the page is visible.
+    // This fallback makes sure the popup still arrives on the first view.
+    const autoOpen = () => {
+      if (autoOpened.current) return;
+      autoOpened.current = true;
+      setOpen(true);
+    };
+    const timer = window.setTimeout(autoOpen, AUTO_OPEN_MS);
+    const onVisible = () => {
+      if (document.visibilityState === "visible" && Date.now() - mountedAt < 10_000) {
+        autoOpen();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
     return () => {
       window.removeEventListener(OPEN_BOOKING_EVENT, onOpen);
+      document.removeEventListener("visibilitychange", onVisible);
       window.clearTimeout(timer);
     };
   }, []);
 
   useEffect(() => {
     if (!open) return;
+    openedAt.current = Date.now();
     const previous = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
     if (focusOnOpen.current) nameRef.current?.focus({ preventScroll: true });
@@ -184,16 +209,19 @@ export default function BookingPopup() {
       role="dialog"
       aria-modal="true"
       aria-label="Book your stay"
-      className="fixed inset-0 z-[1200] flex items-end justify-center sm:items-center"
+      className="fixed inset-0 z-[1200] flex items-center justify-center p-4 sm:p-6"
     >
       <button
         type="button"
         className="absolute inset-0 cursor-default bg-walnut/80"
         aria-label="Close booking popup"
-        onClick={() => setOpen(false)}
+        onClick={() => {
+          // Ignore a tap that was already in progress when the popup opened.
+          if (Date.now() - openedAt.current > 350) setOpen(false);
+        }}
       />
 
-      <div className="relative max-h-[96svh] w-full max-w-[44rem] overflow-y-auto bg-paper">
+      <div className="relative max-h-[calc(100svh-2rem)] w-full max-w-[26rem] overflow-y-auto border border-line bg-paper shadow-[0_30px_80px_rgba(20,24,21,0.35)] sm:max-h-[90svh] sm:max-w-[44rem]">
         <button
           type="button"
           onClick={() => setOpen(false)}
@@ -375,54 +403,12 @@ export default function BookingPopup() {
               </Field>
             </div>
 
-            <fieldset className="grid gap-1">
+            {/* Guests are desktop-only — on a phone the card stays short and
+                the request defaults to two adults, which the team confirms. */}
+            <fieldset className="hidden gap-1 sm:grid">
               <legend className="eyebrow mb-0.5 text-ink/65">07 — Guests</legend>
 
-              {/* Phones swap the two steppers for two compact dropdowns. */}
-              <div className="grid grid-cols-2 gap-2 sm:hidden">
-                <label className="grid gap-1">
-                  <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/65">
-                    Adults
-                  </span>
-                  <div className="relative">
-                    <select
-                      aria-label="Adults"
-                      value={adults}
-                      onChange={(event) => setAdults(Number(event.target.value))}
-                      className="w-full appearance-none border border-line bg-paper px-3 py-2 pr-8 font-mono text-[0.9rem] text-ink outline-none focus:border-clay"
-                    >
-                      {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                        <option key={n} value={n}>
-                          {n}
-                        </option>
-                      ))}
-                    </select>
-                    <Chevron />
-                  </div>
-                </label>
-                <label className="grid gap-1">
-                  <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/65">
-                    Children
-                  </span>
-                  <div className="relative">
-                    <select
-                      aria-label="Children"
-                      value={children}
-                      onChange={(event) => setChildren(Number(event.target.value))}
-                      className="w-full appearance-none border border-line bg-paper px-3 py-2 pr-8 font-mono text-[0.9rem] text-ink outline-none focus:border-clay"
-                    >
-                      {Array.from({ length: 11 }, (_, i) => i).map((n) => (
-                        <option key={n} value={n}>
-                          {n}
-                        </option>
-                      ))}
-                    </select>
-                    <Chevron />
-                  </div>
-                </label>
-              </div>
-
-              <div className="hidden gap-2 sm:grid sm:grid-cols-2">
+              <div className="grid gap-2 sm:grid-cols-2">
                 <Stepper
                   label="Adults"
                   value={adults}
@@ -440,7 +426,16 @@ export default function BookingPopup() {
               </div>
             </fieldset>
 
-            <Field label="08 — Anything we should know (optional)" htmlFor="popup-notes">
+            <Field
+              label={
+                <>
+                  <span className="sm:hidden">07</span>
+                  <span className="hidden sm:inline">08</span>
+                  {" — Anything we should know (optional)"}
+                </>
+              }
+              htmlFor="popup-notes"
+            >
               <textarea
                 id="popup-notes"
                 name="notes"
@@ -566,7 +561,7 @@ function Field({
   htmlFor,
   children,
 }: {
-  label: string;
+  label: React.ReactNode;
   htmlFor: string;
   children: React.ReactNode;
 }) {
