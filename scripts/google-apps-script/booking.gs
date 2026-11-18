@@ -17,8 +17,9 @@
  *    BOOKING_SECRET must be the same value as BOOKING_WEBHOOK_SECRET in the
  *    website environment. Leave both empty to disable the check.
  * 5. Optional: run setupBookingSheet once and authorise. It creates the
- *    "Bookings" tab with its header row. If you skip this, the tab and header
- *    are created automatically on the first booking.
+ *    "Bookings" (contact form) and "Popup" (homepage Reserve popup) tabs
+ *    with their header rows. If you skip this, the tabs and headers are
+ *    created automatically on the first booking for each form.
  * 6. Click Deploy → New deployment → select type "Web app".
  *      Description:      Booking form
  *      Execute as:       Me
@@ -45,12 +46,17 @@
  *
  * THE SHEET LOG
  * -------------
- * Every accepted request is appended as one row of the "Bookings" tab:
- *   Received, Name, Email, Phone, Room, Rate, Meal plan, Check-in, Check-out,
- *   Guests, Page, Notes
- * Set LOG_TO_SHEET to false to stop logging. A sheet failure never blocks a
- * booking — the team email has already been sent at that point, so the request
- * is never lost.
+ * The website has two booking forms with different fields:
+ *   • /contact ("Bookings" tab) — name, email, phone, CMS room + rate,
+ *     check-in / check-out, guest count.
+ *   • homepage "Reserve" popup ("Popup" tab) — phone-only, no email, plus
+ *     meal plan (EP / CP / MAP) and adults / children steppers.
+ * Each accepted request is logged to the tab for the form it came from, with
+ * headers matching what that form actually collects. Tabs and header rows are
+ * created automatically on the first booking — or run setupBookingSheet()
+ * once. Set LOG_TO_SHEET to false to stop logging. A sheet failure never
+ * blocks a booking — the team email has already been sent at that point, so
+ * the request is never lost.
  *
  * NOTES
  * -----
@@ -84,18 +90,35 @@ var LOG_TO_SHEET = true;
  */
 var SHEET_ID = "";
 
-/** Tab that rows are written to. Created automatically when missing. */
-var SHEET_TAB = "Bookings";
+/** Tab for the /contact form (email included, CMS room + rate). */
+var TAB_CONTACT = "Bookings";
 
-/** Header row for the log tab. Must match the order in logToSheet_(). */
-var SHEET_HEADERS = [
+/** Tab for the homepage "Reserve" popup (phone-only, meal plan, steppers). */
+var TAB_POPUP = "Popup";
+
+/** Header rows — one per tab. Must match the row order built in doPost(). */
+var HEADERS_CONTACT = [
   "Received",
   "Name",
   "Email",
   "Phone",
   "Room",
   "Rate",
+  "Check-in",
+  "Check-out",
+  "Guests",
+  "Page",
+  "Notes",
+];
+
+var HEADERS_POPUP = [
+  "Received",
+  "Name",
+  "Phone",
+  "Room",
   "Meal plan",
+  "Adults",
+  "Children",
   "Check-in",
   "Check-out",
   "Guests",
@@ -132,6 +155,8 @@ function doPost(e) {
     var children = clean_(data.children, 4);
     var submittedAt = clean_(data.submittedAt, 40) || new Date().toISOString();
     var source = clean_(data.source, 200);
+    var form = clean_(data.form, 16);
+    var isPopup = /^popup$/i.test(form) || /popup/i.test(source);
 
     if (name.length < 2 || room.length < 1) {
       return json_({ ok: false, error: "Name and room are required." });
@@ -154,7 +179,7 @@ function doPost(e) {
       "Email:     " + (email || "—"),
       "Phone:     " + (phone || "—"),
       "Room:      " + room + (rate ? " (" + rate + " / night)" : ""),
-      mealPlan ? "Meal plan: " + mealPlan : "Meal plan:  —",
+      mealPlan ? "Meal plan: " + mealPlan : "",
       adults ? "Adults:    " + adults : "",
       children ? "Children:  " + children : "",
       "Check-in:  " + (checkin || "—"),
@@ -171,7 +196,7 @@ function doPost(e) {
       to: NOTIFY_EMAIL,
       subject: subject,
       body: plainBody,
-      htmlBody: emailHtml_(receivedLabel, name, email, phone, room, rate, mealPlan, checkin, checkout, guests, notes, source, adults, children),
+      htmlBody: emailHtml_(receivedLabel, name, email, phone, room, rate, mealPlan, checkin, checkout, guests, notes, source, adults, children, isPopup),
     };
     if (email) options.replyTo = email;
 
@@ -205,7 +230,10 @@ function doPost(e) {
       }
     }
 
-    logToSheet_([receivedLabel, name, email, phone, room, rate, mealPlan, checkin, checkout, guests, source, notes]);
+    var sheetRow = isPopup
+      ? [receivedLabel, name, phone, room, mealPlan, adults, children, checkin, checkout, guests, source, notes]
+      : [receivedLabel, name, email, phone, room, rate, checkin, checkout, guests, source, notes];
+    logToSheet_(sheetRow, isPopup);
 
     return json_({ ok: true });
   } catch (error) {
@@ -237,29 +265,24 @@ function setupBookingSheet() {
         "(Extensions → Apps Script), or set SHEET_ID below."
     );
   }
-  getLogSheet_(spreadsheet);
-  return "Bookings will be logged here: " + spreadsheet.getUrl();
+  getLogSheet_(spreadsheet, TAB_CONTACT, HEADERS_CONTACT);
+  getLogSheet_(spreadsheet, TAB_POPUP, HEADERS_POPUP);
+  return "Contact form logs to '" + TAB_CONTACT + "', Reserve popup logs to '" + TAB_POPUP + "': " + spreadsheet.getUrl();
 }
 
 /** Appends a clearly-marked sample row so you can confirm the log works. */
 function testSheetLog() {
-  var row = [
-    "TEST — " + Utilities.formatDate(new Date(), "Asia/Kolkata", "d MMM yyyy, HH:mm 'IST'"),
-    "Test Guest",
-    "test@example.com",
-    "+91 90000 00000",
-    "Test Room",
-    "₹1,000 / night",
-    "MAP",
-    "2026-01-01",
-    "2026-01-02",
-    "2 adults · 1 child",
-    "manual test",
-    "Created by testSheetLog(). Delete this row.",
-  ];
-  return logToSheet_(row)
-    ? "Sample row added to the \"" + SHEET_TAB + "\" tab."
-    : "Could not write to the sheet. Check the execution log for details.";
+  var stamp = "TEST — " + Utilities.formatDate(new Date(), "Asia/Kolkata", "d MMM yyyy, HH:mm 'IST'");
+  var contact = logToSheet_(
+    [stamp, "Test Guest", "test@example.com", "+91 90000 00000", "Test Room", "₹1,000 / night", "2026-01-01", "2026-01-02", "2", "manual test", "Created by testSheetLog(). Delete this row."],
+    false
+  );
+  var popup = logToSheet_(
+    [stamp, "Test Guest", "+91 90000 00000", "Test Room", "MAP", "2", "1", "2026-01-01", "2026-01-02", "2 adults · 1 child", "manual test", "Created by testSheetLog(). Delete this row."],
+    true
+  );
+  return "Contact form test row: " + (contact ? "added to '" + TAB_CONTACT + "'." : "FAILED — check the execution log")
+    + "  Popup test row: " + (popup ? "added to '" + TAB_POPUP + "'." : "FAILED — check the execution log");
 }
 
 // ---------------------------------------------------------------------------
@@ -296,16 +319,17 @@ function json_(payload) {
   );
 }
 
-function emailHtml_(receivedLabel, name, email, phone, room, rate, mealPlan, checkin, checkout, guests, notes, source, adults, children) {
+function emailHtml_(receivedLabel, name, email, phone, room, rate, mealPlan, checkin, checkout, guests, notes, source, adults, children, isPopup) {
   var rows = [
+    ["Form", isPopup ? "Reserve popup (homepage)" : "Contact form (/contact)"],
     ["Received", receivedLabel],
     ["Name", name],
     ["Email", email || "—"],
     ["Phone", phone || "—"],
     ["Room", rate ? room + " · " + rate + " / night" : room],
-    ["Meal plan", mealPlan || "—"],
-    ["Adults", adults || "—"],
-    ["Children", children || "—"],
+    ...(mealPlan ? [["Meal plan", mealPlan]] : []),
+    ...(adults ? [["Adults", adults]] : []),
+    ...(children ? [["Children", children]] : []),
     ["Check-in", checkin || "—"],
     ["Check-out", checkout || "—"],
     ["Guests", guests || "—"],
@@ -340,7 +364,7 @@ function emailHtml_(receivedLabel, name, email, phone, room, rate, mealPlan, che
   );
 }
 
-function logToSheet_(row) {
+function logToSheet_(row, isPopup) {
   if (!LOG_TO_SHEET) return false;
 
   var lock = LockService.getScriptLock();
@@ -357,7 +381,9 @@ function logToSheet_(row) {
       console.warn("Sheet log skipped: no spreadsheet available.");
       return false;
     }
-    var sheet = getLogSheet_(spreadsheet);
+    var tab = isPopup ? TAB_POPUP : TAB_CONTACT;
+    var headers = isPopup ? HEADERS_POPUP : HEADERS_CONTACT;
+    var sheet = getLogSheet_(spreadsheet, tab, headers);
     sheet.appendRow(row);
     return true;
   } catch (error) {
@@ -384,14 +410,14 @@ function getLogSpreadsheet_() {
   }
 }
 
-/** Finds the log tab, creating it with a header row when it is missing. */
-function getLogSheet_(spreadsheet) {
-  var sheet = spreadsheet.getSheetByName(SHEET_TAB);
-  if (!sheet) sheet = spreadsheet.insertSheet(SHEET_TAB);
+/** Finds a tab, creating it with a bold header row when it is missing. */
+function getLogSheet_(spreadsheet, tab, headers) {
+  var sheet = spreadsheet.getSheetByName(tab);
+  if (!sheet) sheet = spreadsheet.insertSheet(tab);
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(SHEET_HEADERS);
-    var header = sheet.getRange(1, 1, 1, SHEET_HEADERS.length);
+    sheet.appendRow(headers);
+    var header = sheet.getRange(1, 1, 1, headers.length);
     header
       .setFontWeight("bold")
       .setBackground("#f0ece4")

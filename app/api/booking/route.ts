@@ -62,6 +62,10 @@ function rateLimit(key: string): boolean {
 }
 
 function text(value: unknown, max: number): string {
+  // The popup steppers send guests/rooms as numbers, not strings.
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return String(Math.trunc(value)).slice(0, max);
+  }
   return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
 
@@ -233,8 +237,9 @@ export async function POST(request: NextRequest) {
         roomSlug: roomSlugForPayload,
         nightlyRate,
         mealPlan: mealPlan || undefined,
-        adults,
-        children,
+        adults: isPopup ? adults : undefined,
+        children: isPopup ? children : undefined,
+        form: isPopup ? "popup" : "contact",
         checkin,
         checkout,
         guests,
