@@ -177,7 +177,7 @@ export default function BookingForm({
   return (
     <form className="grid gap-8" onSubmit={submit} noValidate>
       <fieldset className="grid gap-3">
-        <legend className="eyebrow mb-1 text-ink/65">01 — Choose a room</legend>
+        <legend className="eyebrow mb-1 text-ink/65">01 — Choose a room <span className="text-clay">*</span></legend>
         <div className="grid gap-2">
           {rooms.map((r) => (
             <label
@@ -228,7 +228,7 @@ export default function BookingForm({
       </fieldset>
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="02 — Your name" htmlFor="name">
+        <Field label={<>02 — Your name <span className="text-clay">*</span></>} htmlFor="name">
           <input
             id="name"
             name="name"
@@ -255,7 +255,7 @@ export default function BookingForm({
             ))}
           </select>
         </Field>
-        <Field label="04 — Email" htmlFor="email">
+        <Field label={<>04 — Email <span className="text-clay">*</span></>} htmlFor="email">
           <input
             id="email"
             name="email"
@@ -267,7 +267,7 @@ export default function BookingForm({
             className="w-full bg-transparent py-3 text-[1rem] outline-none placeholder:text-ink/65"
           />
         </Field>
-        <Field label="05 — Phone or WhatsApp" htmlFor="phone">
+        <Field label={<>05 — Phone or WhatsApp <span className="text-clay">*</span></>} htmlFor="phone">
           <input
             id="phone"
             name="phone"
@@ -279,7 +279,7 @@ export default function BookingForm({
             className="w-full bg-transparent py-3 text-[1rem] outline-none placeholder:text-ink/65"
           />
         </Field>
-        <Field label="06 — Check-in (optional)" htmlFor="checkin">
+        <Field label="06 — Check-in" htmlFor="checkin">
           <input
             id="checkin"
             name="checkin"
@@ -289,7 +289,7 @@ export default function BookingForm({
             className="w-full bg-transparent py-3 text-[1rem] outline-none"
           />
         </Field>
-        <Field label="07 — Check-out (optional)" htmlFor="checkout">
+        <Field label="07 — Check-out" htmlFor="checkout">
           <input
             id="checkout"
             name="checkout"
@@ -378,7 +378,7 @@ function Field({
   htmlFor,
   children,
 }: {
-  label: string;
+  label: React.ReactNode;
   htmlFor: string;
   children: React.ReactNode;
 }) {

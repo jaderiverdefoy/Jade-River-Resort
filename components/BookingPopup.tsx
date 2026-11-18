@@ -221,7 +221,7 @@ export default function BookingPopup() {
         }}
       />
 
-      <div className="relative max-h-[calc(100svh-2rem)] w-full max-w-[26rem] overflow-y-auto border border-line bg-paper shadow-[0_30px_80px_rgba(20,24,21,0.35)] sm:max-h-[90svh] sm:max-w-[44rem]">
+      <div className="relative max-h-[calc(100svh-2rem)] w-full max-w-[26rem] overflow-y-auto rounded-md border border-walnut/40 bg-paper shadow-[0_30px_80px_rgba(20,24,21,0.5)] sm:max-h-[90svh] sm:max-w-[44rem]">
         <button
           type="button"
           onClick={() => setOpen(false)}
@@ -233,15 +233,15 @@ export default function BookingPopup() {
           </svg>
         </button>
 
-        <div className="px-4 pb-5 pt-4 sm:px-6 sm:py-6">
-          <p className="eyebrow text-ink/65">Book direct</p>
-          <h2 className="mt-1 font-display text-[clamp(1.2rem,2.2vw,1.5rem)] leading-[1.05] tracking-[-0.03em]">
+        <div className="px-4 pb-5 pt-4 short:py-4 micro:py-3 sm:px-6 sm:py-6">
+          <p className="eyebrow text-ink/65 micro:hidden">Book direct</p>
+          <h2 className="mt-1 font-display text-[clamp(1.2rem,2.2vw,1.5rem)] leading-[1.05] tracking-[-0.03em] micro:hidden">
             Book your stay.
           </h2>
 
-          <form className="mt-3 grid gap-2" onSubmit={submit} noValidate>
+          <form className="mt-3 grid gap-2 short:gap-1.5 micro:gap-1" onSubmit={submit} noValidate>
             <fieldset className="grid gap-1">
-              <legend className="eyebrow mb-0.5 text-ink/65">01 — Room</legend>
+              <legend className="eyebrow mb-0.5 text-ink/65">01 — Room <span className="text-clay">*</span></legend>
 
               {/* Phones get one dropdown where desktop gets the four cards. */}
               <div className="relative sm:hidden">
@@ -263,11 +263,11 @@ export default function BookingPopup() {
                 <Chevron />
               </div>
 
-              <div className="hidden gap-1.5 sm:grid sm:grid-cols-2">
+              <div className="hidden gap-1.5 sm:grid sm:grid-cols-2 micro:pr-10">
                 {ROOM_OPTIONS.map((option) => (
                   <label
                     key={option}
-                    className={`flex cursor-pointer items-center gap-2.5 border px-3.5 py-2.5 transition-colors duration-200 ${
+                    className={`flex cursor-pointer items-center gap-2.5 border px-3.5 py-2.5 transition-colors duration-200 short:py-2 ${
                       room === option
                         ? "border-ink bg-forest text-paper"
                         : "border-line hover:border-ink/40"
@@ -299,7 +299,7 @@ export default function BookingPopup() {
             </fieldset>
 
             <fieldset className="grid gap-1">
-              <legend className="eyebrow mb-0.5 text-ink/65">02 — Meal plan</legend>
+              <legend className="eyebrow mb-0.5 text-ink/65">02 — Meal plan <span className="text-clay">*</span></legend>
 
               <div className="relative sm:hidden">
                 <select
@@ -322,7 +322,7 @@ export default function BookingPopup() {
                 {MEAL_PLANS.map((plan) => (
                   <label
                     key={plan.id}
-                    className={`flex cursor-pointer flex-col gap-0.5 border px-3.5 py-2 transition-colors duration-200 ${
+                    className={`flex cursor-pointer flex-col gap-0.5 border px-3.5 py-2 transition-colors duration-200 short:py-1.5 ${
                       mealPlan === plan.id
                         ? "border-ink bg-forest text-paper"
                         : "border-line hover:border-ink/40"
@@ -352,7 +352,7 @@ export default function BookingPopup() {
             </fieldset>
 
             <div className="grid grid-cols-2 gap-3">
-              <Field label="03 — Your name" htmlFor="popup-name">
+              <Field label={<>03 — Your name <span className="text-clay">*</span></>} htmlFor="popup-name">
                 <input
                   ref={nameRef}
                   id="popup-name"
@@ -362,10 +362,10 @@ export default function BookingPopup() {
                   placeholder="Full name"
                   autoComplete="name"
                   required
-                  className="w-full bg-transparent py-2 text-[0.95rem] outline-none placeholder:text-ink/65"
+                  className="w-full bg-transparent py-2 text-[0.95rem] outline-none placeholder:text-ink/65 short:py-1.5"
                 />
               </Field>
-              <Field label="04 — Phone" htmlFor="popup-phone">
+              <Field label={<>04 — Phone <span className="text-clay">*</span></>} htmlFor="popup-phone">
                 <input
                   id="popup-phone"
                   name="phone"
@@ -375,7 +375,7 @@ export default function BookingPopup() {
                   placeholder="+91 …"
                   autoComplete="tel"
                   required
-                  className="w-full bg-transparent py-2 text-[0.95rem] outline-none placeholder:text-ink/65"
+                  className="w-full bg-transparent py-2 text-[0.95rem] outline-none placeholder:text-ink/65 short:py-1.5"
                 />
               </Field>
             </div>
@@ -388,7 +388,7 @@ export default function BookingPopup() {
                   type="date"
                   value={checkin}
                   onChange={(e) => setCheckin(e.target.value)}
-                  className="w-full bg-transparent py-2 text-[0.95rem] outline-none"
+                  className="w-full bg-transparent py-2 text-[0.95rem] outline-none short:py-1.5"
                 />
               </Field>
               <Field label="06 — Check-out" htmlFor="popup-checkout">
@@ -398,14 +398,14 @@ export default function BookingPopup() {
                   type="date"
                   value={checkout}
                   onChange={(e) => setCheckout(e.target.value)}
-                  className="w-full bg-transparent py-2 text-[0.95rem] outline-none"
+                  className="w-full bg-transparent py-2 text-[0.95rem] outline-none short:py-1.5"
                 />
               </Field>
             </div>
 
             {/* Guests are desktop-only — on a phone the card stays short and
                 the request defaults to two adults, which the team confirms. */}
-            <fieldset className="hidden gap-1 sm:grid">
+            <fieldset className="hidden gap-1 [@media(min-width:640px)_and_(min-height:641px)]:grid">
               <legend className="eyebrow mb-0.5 text-ink/65">07 — Guests</legend>
 
               <div className="grid gap-2 sm:grid-cols-2">
@@ -427,11 +427,12 @@ export default function BookingPopup() {
             </fieldset>
 
             <Field
+              className="tiny:hidden"
               label={
                 <>
                   <span className="sm:hidden">07</span>
                   <span className="hidden sm:inline">08</span>
-                  {" — Anything we should know (optional)"}
+                  {" — Anything we should know"}
                 </>
               }
               htmlFor="popup-notes"
@@ -443,7 +444,7 @@ export default function BookingPopup() {
                 onChange={(e) => setNotes(e.target.value)}
                 rows={1}
                 placeholder="Anniversary, pickup, children's ages…"
-                className="w-full resize-none bg-transparent py-2 text-[0.95rem] outline-none placeholder:text-ink/65"
+                className="w-full resize-none bg-transparent py-2 text-[0.95rem] outline-none placeholder:text-ink/65 short:py-1.5"
               />
             </Field>
 
@@ -469,10 +470,10 @@ export default function BookingPopup() {
               </p>
             ) : null}
 
-            <div className="flex flex-wrap items-center gap-3 border-t border-line pt-3 sm:gap-4 sm:pt-4">
+            <div className="flex flex-wrap items-center gap-3 border-t border-line pt-3 short:pt-3 sm:gap-4 sm:pt-4">
               <button
                 type="submit"
-                className="btn btn-clay disabled:opacity-60"
+                className="btn btn-clay short:py-3 micro:py-2 disabled:opacity-60"
                 disabled={sending}
               >
                 {sending ? "Sending…" : "Send booking request"}
@@ -560,13 +561,15 @@ function Field({
   label,
   htmlFor,
   children,
+  className,
 }: {
   label: React.ReactNode;
   htmlFor: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="group border-b border-line pb-1 focus-within:border-clay">
+    <div className={`group border-b border-line pb-1 focus-within:border-clay ${className ?? ""}`}>
       <label htmlFor={htmlFor} className="eyebrow block text-ink/65">
         {label}
       </label>

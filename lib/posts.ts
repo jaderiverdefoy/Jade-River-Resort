@@ -15,6 +15,14 @@ import type { SanityImage, SanityPost, SanityPostListItem } from "@/sanity/lib/t
 
 const FALLBACK_IMAGE = img.aerial;
 
+/**
+ * Blog fetches are cached with the `post` tag so the Sanity webhook can bust
+ * them instantly, but they also carry a short time window. Without the window
+ * a published post (and a slug that 404'd before publication) stayed cached
+ * until the next deploy whenever the webhook was missing or misconfigured.
+ */
+const POST_REVALIDATE_SECONDS = 60;
+
 export type BlogPost = {
   slug: string;
   title: string;
@@ -171,7 +179,7 @@ export const getAllPosts = cache(async (): Promise<BlogPost[]> => {
     const posts = await client.fetch<SanityPostListItem[]>(
       allPostsQuery,
       {},
-      { next: { revalidate: false, tags: ["post"] } },
+      { next: { revalidate: POST_REVALIDATE_SECONDS, tags: ["post"] } },
     );
     return posts.map(mapSanityPost);
   } catch {
@@ -188,7 +196,7 @@ export const getLatestPosts = cache(async (limit = 3): Promise<BlogPost[]> => {
     const posts = await client.fetch<SanityPostListItem[]>(
       latestPostsQuery,
       { limit },
-      { next: { revalidate: false, tags: ["post"] } },
+      { next: { revalidate: POST_REVALIDATE_SECONDS, tags: ["post"] } },
     );
     return posts.map(mapSanityPost);
   } catch {
@@ -208,7 +216,7 @@ export const getPostBySlug = cache(async (slug: string): Promise<BlogPost | null
     const post = await client.fetch<SanityPost>(
       isEnabled ? draftPostBySlugQuery : postBySlugQuery,
       { slug },
-      isEnabled ? { cache: "no-store" } : { next: { revalidate: false, tags: ["post"] } },
+      isEnabled ? { cache: "no-store" } : { next: { revalidate: POST_REVALIDATE_SECONDS, tags: ["post"] } },
     );
     return post ? mapSanityPost(post) : null;
   } catch {
@@ -225,7 +233,7 @@ export const getAllPostSlugs = cache(async (): Promise<string[]> => {
     const slugs = await client.fetch<{ slug: string }[]>(
       allSlugsQuery,
       {},
-      { next: { revalidate: false, tags: ["post"] } },
+      { next: { revalidate: POST_REVALIDATE_SECONDS, tags: ["post"] } },
     );
     return slugs.map((item) => item.slug).filter(Boolean);
   } catch {

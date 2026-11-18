@@ -33,6 +33,13 @@
   --text-big: clamp(2rem, 4.4vw, 3.9rem);
 }
 
+/* Height breakpoints. Short laptop windows and small phones compress the
+   booking card instead of forcing it to scroll. */
+@custom-variant short (@media (max-height: 780px));
+@custom-variant cramped (@media (max-height: 640px));
+@custom-variant tiny (@media (max-height: 560px));
+@custom-variant micro (@media (max-height: 500px));
+
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;

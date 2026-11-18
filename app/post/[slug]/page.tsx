@@ -7,6 +7,10 @@ import { site } from "@/lib/content";
 import { getAllPostSlugs, getAllPosts, getPostBySlug } from "@/lib/posts";
 import { JsonLd, breadcrumb } from "@/lib/schema";
 
+// Articles regenerate every minute so a fresh post appears, and a slug that
+// 404'd before it was published stops 404ing, even without the webhook.
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
   return slugs.map((slug) => ({ slug }));

@@ -108,7 +108,7 @@ export default function ReviewForm({ source = "website" }: Props) {
             noValidate
           >
             <div>
-              <p className="eyebrow text-ink/65">Your rating</p>
+              <p className="eyebrow text-ink/65">Your rating <span className="text-clay">*</span></p>
               <div className="mt-3 flex flex-wrap items-center gap-2" role="radiogroup" aria-label="Rating">
                 {allowed.map((n) => (
                   <button
@@ -136,7 +136,7 @@ export default function ReviewForm({ source = "website" }: Props) {
 
             <div className="grid gap-6 sm:grid-cols-2">
               <label className="block border-b border-line pb-1 focus-within:border-clay">
-                <span className="eyebrow text-ink/65">Your name</span>
+                <span className="eyebrow text-ink/65">Your name <span className="text-clay">*</span></span>
                 <input
                   required
                   value={name}
@@ -148,7 +148,7 @@ export default function ReviewForm({ source = "website" }: Props) {
                 />
               </label>
               <label className="block border-b border-line pb-1 focus-within:border-clay">
-                <span className="eyebrow text-ink/65">City (optional)</span>
+                <span className="eyebrow text-ink/65">City</span>
                 <input
                   value={from}
                   onChange={(e) => setFrom(e.target.value)}
@@ -161,7 +161,7 @@ export default function ReviewForm({ source = "website" }: Props) {
             </div>
 
             <label className="block border-b border-line pb-1 focus-within:border-clay">
-              <span className="eyebrow text-ink/65">Your note</span>
+              <span className="eyebrow text-ink/65">Your note <span className="text-clay">*</span></span>
               <textarea
                 required
                 rows={4}
