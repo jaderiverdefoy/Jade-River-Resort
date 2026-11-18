@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { img, site } from "@/lib/content";
 import { numberWord } from "@/lib/utils";
+import { OPEN_BOOKING_EVENT } from "@/components/BookingPopup";
 
 const lines = [
   { text: "Life,", emphasis: false },
@@ -137,8 +137,9 @@ export default function Hero({ roomsTotal = 13 }: { roomsTotal?: number }) {
             </div>
 
             <div className="w-fit self-start mr-[clamp(2.5rem,7vw,5rem)] lg:self-end">
-              <Link
-                href="/contact"
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent(OPEN_BOOKING_EVENT))}
                 className="group inline-flex items-center gap-3 bg-walnut px-6 py-5 font-mono text-[11px] uppercase tracking-[0.2em] text-paper transition-colors duration-300 hover:bg-walnut-brown"
                 style={{ width: "fit-content" }}
               >
@@ -153,7 +154,7 @@ export default function Hero({ roomsTotal = 13 }: { roomsTotal?: number }) {
                 >
                   <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" strokeWidth="1.2" />
                 </svg>
-              </Link>
+              </button>
             </div>
           </motion.div>
 

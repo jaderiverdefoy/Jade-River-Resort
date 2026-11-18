@@ -9,6 +9,7 @@ type Booking = {
   checkin?: string;
   checkout?: string;
   guests?: string;
+  mealPlan?: string;
 };
 
 /**
@@ -44,6 +45,7 @@ export default function ThankYouActions({ rooms }: { rooms: Room[] }) {
   const lines = [
     "Hello Jade River Resort, I have just sent a booking request.",
     booking?.room ? `Room: ${booking.room}` : null,
+    booking?.mealPlan ? `Meal plan: ${booking.mealPlan}` : null,
     booking?.checkin ? `Check-in: ${booking.checkin}` : null,
     booking?.checkout ? `Check-out: ${booking.checkout}` : null,
     booking?.guests ? `Guests: ${booking.guests}` : null,

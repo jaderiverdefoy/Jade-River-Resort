@@ -2,6 +2,7 @@
 
 import { usePathname, useSelectedLayoutSegment } from "next/navigation";
 import BackToHome from "@/components/BackToHome";
+import BackToTop from "@/components/BackToTop";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 
 import SignatureIntro from "@/components/SignatureIntro";
@@ -44,6 +45,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
       <main id="main">{children}</main>
       <SiteFooter />
       <FloatingWhatsApp />
+      <BackToTop />
       {!isHome && (
         <BackToHome
           className="fixed bottom-5 left-5 z-40 rounded-full bg-paper/90 px-4 py-3 text-[9px] shadow-[0_10px_40px_rgba(33,51,41,0.18)] backdrop-blur transition-transform hover:-translate-y-0.5 md:bottom-8 md:left-8"

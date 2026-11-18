@@ -21,12 +21,26 @@ type Submission = {
   email?: unknown;
   phone?: unknown;
   room?: unknown;
+  roomCategory?: unknown;
+  mealPlan?: unknown;
+  adults?: unknown;
+  children?: unknown;
   checkin?: unknown;
   checkout?: unknown;
   guests?: unknown;
   notes?: unknown;
   company?: unknown;
 };
+
+const ROOM_CATEGORIES = [
+  "Premium Room",
+  "Executive Suite",
+  "Executive Duplex",
+  "Family Room",
+] as const;
+
+const MEAL_PLANS = ["EP", "CP", "MAP"] as const;
+
 
 const MAX_PER_WINDOW = 5;
 const WINDOW_MS = 10 * 60 * 1000;
@@ -88,10 +102,36 @@ export async function POST(request: NextRequest) {
   const email = text(input.email, 160);
   const phone = text(input.phone, 40);
   const roomSlug = text(input.room, 96);
+  const roomCategory = text(input.roomCategory, 64);
+  const mealPlan = text(input.mealPlan, 8).toUpperCase();
+  const adults = Math.min(10, Math.max(1, Number.parseInt(text(input.adults, 3), 10) || 2));
+  const children = Math.min(10, Math.max(0, Number.parseInt(text(input.children, 3), 10) || 0));
+  const isPopup = roomCategory.length > 0;
   const checkin = text(input.checkin, 10);
   const checkout = text(input.checkout, 10);
-  const guests = text(input.guests, 4) || "2";
   const notes = text(input.notes, 1500);
+
+  // Popup: phone is mandatory; meal plan and room category restricted to known values.
+  if (isPopup) {
+    if (!ROOM_CATEGORIES.includes(roomCategory as (typeof ROOM_CATEGORIES)[number])) {
+      return Response.json(
+        { ok: false, error: "Please choose a valid room category." },
+        { status: 422 },
+      );
+    }
+    if (mealPlan && !MEAL_PLANS.includes(mealPlan as (typeof MEAL_PLANS)[number])) {
+      return Response.json(
+        { ok: false, error: "Please choose a valid meal plan." },
+        { status: 422 },
+      );
+    }
+    if (phone.replace(/\D/g, "").length < 8) {
+      return Response.json(
+        { ok: false, error: "Please add a phone number we can reach you on." },
+        { status: 422 },
+      );
+    }
+  }
 
   if (name.length < 2) {
     return Response.json(
@@ -131,13 +171,34 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const rooms = await getRooms();
-  const room = rooms.find((item) => item.slug === roomSlug);
-  if (!room) {
-    return Response.json(
-      { ok: false, error: "Please choose a room." },
-      { status: 422 },
-    );
+  // Room naming for the lead email: the contact form uses the CMS room name
+  // + price; the homepage popup passes a plain category label instead.
+  let roomName: string;
+  let roomSlugForPayload: string;
+  let nightlyRate = "";
+  let guests: string;
+
+  if (isPopup) {
+    roomName = roomCategory;
+    roomSlugForPayload = "";
+    nightlyRate = "";
+    guests =
+      children > 0
+        ? `${adults} adults · ${children} ${children === 1 ? "child" : "children"}`
+        : `${adults} adult${adults === 1 ? "" : "s"}`;
+  } else {
+    const rooms = await getRooms();
+    const room = rooms.find((item) => item.slug === roomSlug);
+    if (!room) {
+      return Response.json(
+        { ok: false, error: "Please choose a room." },
+        { status: 422 },
+      );
+    }
+    roomName = room.name;
+    roomSlugForPayload = room.slug;
+    nightlyRate = formatPrice(room.price);
+    guests = text(input.guests, 40) || "2";
   }
 
   const webhook = process.env.GOOGLE_APPS_SCRIPT_BOOKING_URL;
@@ -168,15 +229,18 @@ export async function POST(request: NextRequest) {
         name,
         email,
         phone,
-        room: room.name,
-        roomSlug: room.slug,
-        nightlyRate: formatPrice(room.price),
+        room: roomName,
+        roomSlug: roomSlugForPayload,
+        nightlyRate,
+        mealPlan: mealPlan || undefined,
+        adults,
+        children,
         checkin,
         checkout,
         guests,
         notes,
         submittedAt,
-        source: site.url + "/contact",
+        source: isPopup ? site.url + "/ (booking popup)" : site.url + "/contact",
       }),
     });
 

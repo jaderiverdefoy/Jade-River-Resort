@@ -142,18 +142,18 @@ export default async function PostPage({
         </header>
 
         <div className="shell">
-          <div className="mx-auto flex max-w-[68ch] flex-wrap items-center justify-between gap-3 border-b border-line py-5">
-            <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/65">
+          <div className="mx-auto flex max-w-[68ch] flex-wrap items-center justify-between gap-3 border-b border-line py-4">
+            <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-ink/75">
               {post.author || "Jade River Resort"}
             </p>
-            <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink/65">
+            <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-ink/75">
               {post.date} · {post.read} read
             </p>
           </div>
         </div>
 
-        <div className="shell py-10 md:py-12">
-          <div className="mx-auto max-w-[68ch]">
+        <div className="shell pb-10 pt-5 md:pb-12 md:pt-6">
+          <div className="mx-auto max-w-[68ch] [&>*:first-child]:mt-0">
             {post.portableBody ? (
               <PostBody value={post.portableBody} />
             ) : (

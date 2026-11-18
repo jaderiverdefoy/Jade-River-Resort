@@ -8,6 +8,7 @@ import LocationSection from "@/components/home/LocationSection";
 import GuestNotes from "@/components/home/GuestNotes";
 import BlogTeaser from "@/components/home/BlogTeaser";
 import ClosingCTA from "@/components/home/ClosingCTA";
+import BookingPopup from "@/components/BookingPopup";
 import { getDisplayReviews } from "@/lib/googleReviews";
 import { getExperiences, getGallery, getRooms, getRoomsTotal } from "@/lib/cmsContent";
 
@@ -44,6 +45,7 @@ export default async function HomePage() {
       <GuestNotes reviews={reviews} googleMapsUrl={mapsUrl} roomsTotal={roomsTotal} />
       <BlogTeaser />
       <ClosingCTA roomsTotal={roomsTotal} />
+      <BookingPopup />
     </>
   );
 }

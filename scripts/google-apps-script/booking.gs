@@ -46,8 +46,8 @@
  * THE SHEET LOG
  * -------------
  * Every accepted request is appended as one row of the "Bookings" tab:
- *   Received, Name, Email, Phone, Room, Rate, Check-in, Check-out, Guests,
- *   Page, Notes
+ *   Received, Name, Email, Phone, Room, Rate, Meal plan, Check-in, Check-out,
+ *   Guests, Page, Notes
  * Set LOG_TO_SHEET to false to stop logging. A sheet failure never blocks a
  * booking — the team email has already been sent at that point, so the request
  * is never lost.
@@ -95,6 +95,7 @@ var SHEET_HEADERS = [
   "Phone",
   "Room",
   "Rate",
+  "Meal plan",
   "Check-in",
   "Check-out",
   "Guests",
@@ -123,9 +124,12 @@ function doPost(e) {
     var room = clean_(data.room, 96);
     var checkin = clean_(data.checkin, 10);
     var checkout = clean_(data.checkout, 10);
-    var guests = clean_(data.guests, 8);
+    var guests = clean_(data.guests, 40);
     var notes = clean_(data.notes, 1500);
     var rate = clean_(data.nightlyRate, 40);
+    var mealPlan = clean_(data.mealPlan, 8);
+    var adults = clean_(data.adults, 4);
+    var children = clean_(data.children, 4);
     var submittedAt = clean_(data.submittedAt, 40) || new Date().toISOString();
     var source = clean_(data.source, 200);
 
@@ -150,6 +154,9 @@ function doPost(e) {
       "Email:     " + (email || "—"),
       "Phone:     " + (phone || "—"),
       "Room:      " + room + (rate ? " (" + rate + " / night)" : ""),
+      mealPlan ? "Meal plan: " + mealPlan : "Meal plan:  —",
+      adults ? "Adults:    " + adults : "",
+      children ? "Children:  " + children : "",
       "Check-in:  " + (checkin || "—"),
       "Check-out: " + (checkout || "—"),
       "Guests:    " + (guests || "—"),
@@ -164,7 +171,7 @@ function doPost(e) {
       to: NOTIFY_EMAIL,
       subject: subject,
       body: plainBody,
-      htmlBody: emailHtml_(receivedLabel, name, email, phone, room, rate, checkin, checkout, guests, notes, source),
+      htmlBody: emailHtml_(receivedLabel, name, email, phone, room, rate, mealPlan, checkin, checkout, guests, notes, source, adults, children),
     };
     if (email) options.replyTo = email;
 
@@ -198,7 +205,7 @@ function doPost(e) {
       }
     }
 
-    logToSheet_([receivedLabel, name, email, phone, room, rate, checkin, checkout, guests, source, notes]);
+    logToSheet_([receivedLabel, name, email, phone, room, rate, mealPlan, checkin, checkout, guests, source, notes]);
 
     return json_({ ok: true });
   } catch (error) {
@@ -243,9 +250,10 @@ function testSheetLog() {
     "+91 90000 00000",
     "Test Room",
     "₹1,000 / night",
+    "MAP",
     "2026-01-01",
     "2026-01-02",
-    "2",
+    "2 adults · 1 child",
     "manual test",
     "Created by testSheetLog(). Delete this row.",
   ];
@@ -288,13 +296,16 @@ function json_(payload) {
   );
 }
 
-function emailHtml_(receivedLabel, name, email, phone, room, rate, checkin, checkout, guests, notes, source) {
+function emailHtml_(receivedLabel, name, email, phone, room, rate, mealPlan, checkin, checkout, guests, notes, source, adults, children) {
   var rows = [
     ["Received", receivedLabel],
     ["Name", name],
     ["Email", email || "—"],
     ["Phone", phone || "—"],
     ["Room", rate ? room + " · " + rate + " / night" : room],
+    ["Meal plan", mealPlan || "—"],
+    ["Adults", adults || "—"],
+    ["Children", children || "—"],
     ["Check-in", checkin || "—"],
     ["Check-out", checkout || "—"],
     ["Guests", guests || "—"],
