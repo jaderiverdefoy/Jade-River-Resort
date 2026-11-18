@@ -14,8 +14,9 @@ import { site } from "@/lib/content";
  */
 export const OPEN_BOOKING_EVENT = "jr:open-booking";
 
-/** Delay before the popup opens itself. Long enough for the intro to clear. */
-const AUTO_OPEN_MS = 2600;
+/** Delay before the popup opens itself. Long enough for the intro to clear
+ *  and for a visitor to settle into the hero first. */
+const AUTO_OPEN_MS = 4500;
 
 const ROOM_OPTIONS = [
   "Premium Room",
