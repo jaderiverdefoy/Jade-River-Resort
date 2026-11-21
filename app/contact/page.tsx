@@ -32,7 +32,7 @@ export default async function ContactPage() {
           <>
             Tell us when.
             <br />
-            We’ll keep the <em className="text-clay">river ready.</em>
+            We’ll keep the <em className="mark-sage">river ready.</em>
           </>
         }
         intro="No booking engine, no OTA, no commission. Choose a room, add your dates, and send the request — a person from the resort replies with availability and the final rate."
@@ -51,32 +51,7 @@ export default async function ContactPage() {
         }
       />
 
-      <section className="shell pb-6">
-        <div className="grid gap-10 border-b border-line pb-8 md:grid-cols-12 md:gap-14">
-          <p className="eyebrow text-ink/65 md:col-span-3">How a stay starts</p>
-          <div className="max-w-[62ch] space-y-4 text-[0.95rem] leading-relaxed text-ink/75 md:col-span-8">
-            <p>
-              Pick a room, add your dates and the number of guests, and send the
-              request. It reaches the resort inbox immediately, and a person
-              from the team answers — not a portal, not a bot — usually within
-              the hour on working days, with availability and the final rate
-              against the 50% advance. If you would rather not wait, the same
-              details can be sent on WhatsApp in one tap.
-            </p>
-            <p>
-              1 · Choose a room. 2 · Send the request form (or the WhatsApp
-              note). 3 · We confirm the dates and the advance — GST, invoices
-              and group rates go through email. Nobody takes a commission on your stay, which is
-              the whole point of booking directly. On arrival all you need is a
-              government photo ID — check-in runs from 2:00 PM, check-out from
-              12:00 noon, and bags can be held for the morning if you land
-              early.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="shell pb-24 md:pb-32">
+      <section className="shell pb-24 pt-4 md:pb-32 md:pt-6">
         <div className="grid gap-14 md:grid-cols-12">
           <div className="md:col-span-7" data-reveal="zoom">
             <h2 className="sr-only">Reserve rooms at Jade River Resort, directly</h2>

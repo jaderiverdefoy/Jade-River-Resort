@@ -115,10 +115,6 @@ export default async function RoomPage({
               {room.long}
             </p>
 
-            <p className="body-copy mt-6 max-w-[62ch]" data-reveal style={{ ["--reveal-delay" as string]: "90ms" }}>
-              {room.note}
-            </p>
-
             <div
               className="mt-12 grid gap-10 border-t border-line pt-8 sm:grid-cols-2"
               data-reveal

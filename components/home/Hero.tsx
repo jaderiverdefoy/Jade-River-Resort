@@ -140,7 +140,7 @@ export default function Hero({ roomsTotal = 13 }: { roomsTotal?: number }) {
               <button
                 type="button"
                 onClick={() => window.dispatchEvent(new CustomEvent(OPEN_BOOKING_EVENT))}
-                className="group inline-flex items-center gap-3 bg-walnut px-6 py-5 font-mono text-[11px] uppercase tracking-[0.2em] text-paper transition-colors duration-300 hover:bg-walnut-brown"
+                className="group inline-flex items-center gap-3 bg-forest px-6 py-5 font-mono text-[11px] uppercase tracking-[0.2em] text-paper transition-colors duration-300 hover:bg-copper"
                 style={{ width: "fit-content" }}
               >
                 Reserve

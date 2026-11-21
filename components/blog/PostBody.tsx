@@ -182,10 +182,10 @@ const components: PortableTextComponents = {
 
       const style =
         value?.style === "secondary"
-          ? "border border-line text-ink hover:border-walnut hover:bg-walnut hover:text-paper"
+          ? "border border-line text-ink hover:border-walnut hover:bg-forest hover:text-paper"
           : value?.style === "whatsapp"
-            ? "bg-forest text-paper hover:bg-walnut-brown"
-            : "bg-walnut text-paper hover:bg-walnut-brown";
+            ? "bg-forest text-paper hover:bg-copper"
+            : "bg-forest text-paper hover:bg-copper";
 
       const className = `inline-flex items-center gap-3 px-6 py-4 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors duration-300 ${style}`;
 

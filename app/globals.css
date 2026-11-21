@@ -174,7 +174,9 @@
     align-items: center;
     gap: 0.85rem;
     overflow: hidden;
-    border: 1px solid currentColor;
+    border: 1px solid var(--color-forest);
+    background: var(--color-forest);
+    color: var(--color-paper);
     padding: 1.05rem 1.65rem;
     font-family: var(--font-mono);
     font-weight: 600;
@@ -182,7 +184,10 @@
     letter-spacing: 0.08em;
     text-transform: none;
     isolation: isolate;
-    transition: color 0.5s var(--ease-out-expo);
+    transition:
+      color 0.5s var(--ease-out-expo),
+      border-color 0.5s var(--ease-out-expo),
+      background-color 0.5s var(--ease-out-expo);
   }
 
   .btn::before {
@@ -206,16 +211,35 @@
   }
 
   .btn-clay::before {
-    background: var(--color-walnut);
+    background: var(--color-walnut-brown);
   }
 
   .btn-clay {
     border-color: var(--color-walnut);
-    color: var(--color-walnut);
+    background: var(--color-walnut);
+    color: var(--color-paper);
   }
 
   .btn-clay:hover,
   .btn-clay:focus-visible {
+    border-color: var(--color-walnut-brown);
+    color: var(--color-paper);
+  }
+
+  /* Light button for use on dark (forest) sections. */
+  .btn-paper::before {
+    background: var(--color-clay);
+  }
+
+  .btn-paper {
+    border-color: var(--color-paper);
+    background: var(--color-paper);
+    color: var(--color-forest);
+  }
+
+  .btn-paper:hover,
+  .btn-paper:focus-visible {
+    border-color: var(--color-clay);
     color: var(--color-paper);
   }
 
@@ -226,6 +250,44 @@
     letter-spacing: 0.12em;
     font-variant-numeric: tabular-nums;
     color: color-mix(in srgb, var(--color-charcoal) 70%, transparent);
+  }
+
+  /*
+   * Selective keyword highlight: a muted sage rectangle, slightly wider than
+   * the words and tilted a degree or two. Keep the text itself charcoal.
+   */
+  .mark-sage {
+    position: relative;
+    display: inline-block;
+    isolation: isolate;
+    padding: 0.01em 0.13em 0.03em;
+    color: var(--color-charcoal);
+    font-weight: 800;
+    -webkit-text-stroke: 0.012em currentColor;
+  }
+
+  .mark-sage::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0.04em -0.14em 0.02em -0.14em;
+    background: #c8d5a5;
+    transform: rotate(-1.4deg);
+    transform-origin: center;
+  }
+
+  .popup-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-forest) transparent;
+  }
+
+  .popup-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .popup-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-forest);
+    border-radius: 999px;
   }
 
   .dropcap::first-letter {

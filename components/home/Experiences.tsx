@@ -23,7 +23,7 @@ export default function Experiences({
               data-reveal
             >
               {experiences.length === 6 ? "Six" : experiences.length} ways to do nothing{" "}
-              <em className="text-clay">very well.</em>
+              <em>very well.</em>
             </h3>
           </div>
           <p className="body-copy max-w-sm md:col-span-4 md:col-start-9" data-reveal>

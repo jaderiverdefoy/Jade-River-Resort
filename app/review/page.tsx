@@ -21,7 +21,7 @@ export default function ReviewPage() {
             className="mt-4 text-[clamp(2.2rem,4.9vw,4.1rem)] leading-[0.92] tracking-[-0.045em]"
             data-reveal
           >
-            How was <em className="text-clay">your stay?</em>
+            How was <em>your stay?</em>
           </h1>
           <h2 className="sr-only">Tell us about your stay at Jade River Resort</h2>
           <p

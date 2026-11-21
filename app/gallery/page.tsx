@@ -29,7 +29,7 @@ export default async function GalleryPage() {
         eyebrow="Gallery · The property"
         title={
           <>
-            A frame every <em className="text-clay">few steps.</em>
+            A frame every <em className="mark-sage">few steps.</em>
           </>
         }
         intro="Wooden facades, a stream in front, pine forest behind. The light changes every hour and never repeats itself."
@@ -49,16 +49,6 @@ export default async function GalleryPage() {
 
       <section className="shell pb-24 md:pb-32">
         <h2 className="sr-only">Photographs of Jade River Resort</h2>
-        <p className="body-copy mb-8 max-w-[64ch]">
-          Every frame here was shot on the property, and every one of them shows
-          the same building from a slightly different angle — the walnut facade
-          in the rain, the lawn at dusk with one light on, the balcony that
-          faces east and catches the first of the sun. Nothing is stock,
-          nothing is staged for a brochure nobody believes; the rooms you see
-          are the rooms we keep, and the light is whatever the valley decided
-          that day. Bring binoculars for the birds, and ignore the ones that
-          pretend to be tame.
-        </p>
         <GalleryGrid items={gallery} />
       </section>
 
@@ -66,7 +56,7 @@ export default async function GalleryPage() {
         <div className="shell flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <p className="max-w-[26ch] font-display text-[clamp(1.7rem,3vw,2.8rem)] leading-[1.05]" data-reveal>
             The photographs only get you halfway. The{" "}
-            <em className="text-clay">sound</em> does the rest.
+            <em>sound</em> does the rest.
           </p>
           <div className="flex flex-wrap gap-6" data-reveal="zoom" style={{ ["--reveal-delay" as string]: "100ms" }}>
             <Link href="/contact" className="btn">

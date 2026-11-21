@@ -102,7 +102,7 @@ export default async function PostPage({
       />
 
       <article className="pt-[68px] md:pt-[80px]">
-        <header className="relative isolate w-full overflow-hidden bg-walnut">
+        <header className="relative isolate w-full overflow-hidden bg-forest">
           {post.heroImage ? (
             <>
               <Image
@@ -116,7 +116,7 @@ export default async function PostPage({
               />
               {/* Keeps the title legible over any photo. */}
               <div
-                className="absolute inset-0 bg-gradient-to-t from-walnut/90 via-walnut/60 to-walnut/45"
+                className="absolute inset-0 bg-gradient-to-t from-forest/90 via-forest/60 to-forest/45"
                 aria-hidden="true"
               />
             </>

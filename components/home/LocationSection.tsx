@@ -37,12 +37,12 @@ export default function LocationSection() {
               className="font-bold mt-4 text-[clamp(2rem,4vw,3.9rem)] leading-[0.95]"
               data-reveal
             >
-              The road ends. <em className="text-clay">The river keeps going.</em>
+              The road ends. The <em className="mark-sage">river</em> keeps going.
             </h3>
 
             <p className="body-copy mt-8 max-w-md" data-reveal>
               Pahalgam sits at 2,130 metres in the Lidder valley. Srinagar Airport is
-              96 km away — roughly two and a half to three hours by road, and a
+              96 km away — roughly one and a half to two hours by road, and a
               different world by the time you arrive.
             </p>
 
@@ -53,7 +53,7 @@ export default function LocationSection() {
               </div>
               <div data-reveal="zoom" style={{ ["--reveal-delay" as string]: "60ms" }}>
                 <dt className="eyebrow text-ink/65">Drive</dt>
-                <dd className="mt-2 text-[0.95rem]">2.5 – 3 hours</dd>
+                <dd className="mt-2 text-[0.95rem]">1.5 – 2 hours</dd>
               </div>
               <div data-reveal="zoom" style={{ ["--reveal-delay" as string]: "120ms" }}>
                 <dt className="eyebrow text-ink/65">Coordinates</dt>
@@ -194,7 +194,7 @@ export default function LocationSection() {
                 </text>
 
                 <text x="72" y="492" fill="#201B17" fillOpacity="0.45" fontSize="9" fontFamily="monospace" letterSpacing="1.5">
-                  96 KM · 2.5–3 HRS
+                  96 KM · 1.5–2 HRS
                 </text>
               </svg>
 

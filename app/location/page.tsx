@@ -8,14 +8,18 @@ import { pageMeta } from "@/lib/metadata";
 export const metadata = pageMeta({
   title: "Location & Directions — Jade River Resort, Pahalgam",
   description:
-    "Jade River Resort is in Pahalgam at 2,130 metres. Srinagar Airport is 96 km away, roughly 2.5 to 3 hours by road. Directions and coordinates.",
+    "Jade River Resort is in Pahalgam at 2,130 metres. Srinagar Airport is 96 km away, roughly 1.5 to 2 hours by road. Directions and coordinates.",
   path: "/location",
 });
 
 const nearby = [
-  { name: "Aru Valley", note: "Meadows and a quiet road" },
-  { name: "Betaab Valley", note: "The river bend" },
-  { name: "Chandanwari", note: "The road toward Amarnath" },
+  {
+    name: "Aru Valley",
+    note: "Meadows and a quiet road",
+    href: "/post/a-slow-guide-to-aru-valley2",
+  },
+  { name: "Betaab Valley", note: "The river bend", href: "/post" },
+  { name: "Chandanwari", note: "The road toward Amarnath", href: "/post" },
 ];
 
 export default function LocationPage() {
@@ -32,7 +36,7 @@ export default function LocationPage() {
         title={
           <>
             At the end of the{" "}
-            <em className="text-clay">valley road.</em>
+            <em className="mark-sage">valley road.</em>
           </>
         }
         intro="Pahalgam sits at 2,130 metres in the Lidder valley. The last stretch of road follows the river, and then it is just the river."
@@ -76,12 +80,12 @@ export default function LocationPage() {
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-5">
             <h2 className="text-[clamp(1.9rem,3.4vw,3rem)] leading-[1.02]" data-reveal>
-              Getting here is part of the <em className="text-clay">slowing.</em>
+              Getting here is part of the <em>slowing.</em>
             </h2>
             <p className="body-copy mt-6" data-reveal style={{ ["--reveal-delay" as string]: "80ms" }}>
               Fly into Srinagar, then drive south through the Lidder valley. The
               road climbs gradually, the air changes, and by the time you turn off
-              toward the property, the city feels much further than three hours
+              toward the property, the city feels much further than two hours
               away. We can arrange a pickup with the resort team — just ask before
               you book.
             </p>
@@ -93,7 +97,7 @@ export default function LocationPage() {
             >
               {[
                 ["Airport", "Srinagar · 96 km"],
-                ["Drive", "2.5 – 3 hours"],
+                ["Drive", "1.5 – 2 hours"],
                 ["Elevation", "2,130 m"],
                 ["Address", "Pahalgam, J&K 192125"],
               ].map(([k, v]) => (
@@ -120,9 +124,10 @@ export default function LocationPage() {
             </span>
             <div className="mt-6">
               {nearby.map((n, i) => (
-                <div
+                <Link
                   key={n.name}
-                  className="group flex items-baseline justify-between gap-6 border-t border-line py-5 last:border-b"
+                  href={n.href}
+                  className="group flex items-baseline justify-between gap-6 border-t border-line py-5 transition-colors duration-300 last:border-b hover:bg-paper-2/60"
                   data-reveal="zoom"
                   style={{ ["--reveal-delay" as string]: `${i * 70}ms` }}
                 >
@@ -137,10 +142,10 @@ export default function LocationPage() {
                       </p>
                     </div>
                   </div>
-                  <span className="text-ink/65">
+                  <span className="text-ink/65 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-clay">
                     →
                   </span>
-                </div>
+                </Link>
               ))}
             </div>
 

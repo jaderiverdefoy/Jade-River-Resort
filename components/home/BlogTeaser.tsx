@@ -19,7 +19,7 @@ export default async function BlogTeaser() {
               className="font-bold mt-4 text-[clamp(2.1rem,4.2vw,4.1rem)] leading-[0.94]"
               data-reveal
             >
-              Notes from the <em className="text-clay">slow side.</em>
+              Notes from the <em>slow side.</em>
             </h3>
           </div>
           <Link
@@ -86,7 +86,7 @@ export default async function BlogTeaser() {
                         {post.excerpt}
                       </p>
                     </div>
-                    <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line transition-all duration-500 group-hover:border-walnut group-hover:bg-walnut group-hover:text-paper">
+                    <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line transition-all duration-500 group-hover:border-walnut group-hover:bg-forest group-hover:text-paper">
                       <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true" className="arrow-static">
                         <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" strokeWidth="1.2" />
                       </svg>

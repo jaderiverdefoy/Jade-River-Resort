@@ -41,7 +41,7 @@ function RoomCard({ room, index }: { room: Room; index: number }) {
             <span className="font-mono text-[10px] uppercase tracking-[0.18em]">
               {room.bestFor}
             </span>
-            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 transition-all duration-500 group-hover:border-clay group-hover:bg-walnut-brown">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 transition-all duration-500 group-hover:border-clay group-hover:bg-copper">
               <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true" className="arrow-static">
                 <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" strokeWidth="1.2" />
               </svg>
@@ -174,8 +174,8 @@ export default function RoomsRail({
                 data-reveal
                 style={{ ["--reveal-delay" as string]: "70ms" }}
               >
-                {numberWord(rooms.length)} shapes of{" "}
-                <em className="text-clay">quiet.</em>
+                {numberWord(rooms.length)} kinds of{" "}
+                <em>rooms.</em>
               </h3>
             </div>
             <div className="flex items-center gap-6">
@@ -204,7 +204,7 @@ export default function RoomsRail({
                   <br />
                   rooms.
                   <br />
-                  <em className="text-clay">No more.</em>
+                  <em>No more.</em>
                 </p>
                 <p className="mt-6 max-w-[26ch] text-[0.92rem] leading-relaxed text-paper/65">
                   A balcony, a suite, or two floors for the family. Every room opens
@@ -264,8 +264,8 @@ export default function RoomsRail({
             data-reveal
             style={{ ["--reveal-delay" as string]: "60ms" }}
           >
-            {numberWord(rooms.length)} shapes of{" "}
-            <em className="text-clay">quiet.</em>
+            {numberWord(rooms.length)} kinds of{" "}
+            <em>rooms.</em>
           </p>
           <p
             className="mt-5 max-w-[32ch] text-[0.92rem] leading-relaxed text-paper/65"
@@ -343,7 +343,7 @@ export default function RoomsRail({
         <div className="mt-8 px-[clamp(1.15rem,4.2vw,5rem)]">
           <Link
             href="/rooms"
-            className="btn w-full justify-center border-paper/30 text-paper"
+            className="btn btn-paper w-full justify-center"
             data-reveal="zoom"
             style={{ ["--reveal-delay" as string]: "140ms" }}
           >

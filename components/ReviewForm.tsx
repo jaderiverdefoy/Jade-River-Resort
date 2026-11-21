@@ -87,7 +87,7 @@ export default function ReviewForm({ source = "website" }: Props) {
           >
             <span className="eyebrow text-ink/65">Thank you</span>
             <p className="mt-4 font-display text-[clamp(1.8rem,3vw,2.8rem)] leading-[1.05]">
-              Your note has been <em className="text-clay">received.</em>
+              Your note has been <em>received.</em>
             </p>
             <button
               type="button"
@@ -120,7 +120,7 @@ export default function ReviewForm({ source = "website" }: Props) {
                     aria-label={`${n} star${n > 1 ? "s" : ""}`}
                     className={`flex min-w-[3rem] flex-col items-center gap-1 border px-2 py-2 transition-all duration-300 ${
                       n <= rating
-                        ? "border-walnut bg-walnut text-paper"
+                        ? "border-walnut bg-forest text-paper"
                         : "border-line text-ink/65 hover:border-ink/40"
                     }`}
                   >

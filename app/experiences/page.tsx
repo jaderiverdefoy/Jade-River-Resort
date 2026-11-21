@@ -32,7 +32,7 @@ export default async function ExperiencesPage() {
         title={
           <>
             {experiences.length === 6 ? "Six" : experiences.length} ways to do nothing{" "}
-            <em className="text-clay">very well.</em>
+            <em className="mark-sage">very well.</em>
           </>
         }
         intro="A fire is lit after dark. A path follows the water. The valley does the rest — nothing is scheduled for you."
@@ -93,7 +93,7 @@ export default async function ExperiencesPage() {
                 <h3 className="font-bold mt-4 text-[clamp(2rem,3.6vw,3.5rem)] leading-[0.96]">
                   {exp.title}
                 </h3>
-                <p className="mt-4 font-display text-[1.15rem] leading-snug text-clay">
+                <p className="mt-4 font-display text-[1.15rem] leading-snug text-ink/70">
                   {exp.subtitle}
                 </p>
                 <p className="body-copy mt-5">{exp.body}</p>
@@ -109,10 +109,10 @@ export default async function ExperiencesPage() {
         })}
       </section>
 
-      <section className="relative overflow-hidden bg-forest py-20 text-paper" data-reveal="zoom">
+      <section className="relative overflow-hidden border-t border-line bg-paper-2 py-20" data-reveal="zoom">
         <div className="shell flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
           <div>
-            <span className="eyebrow text-paper/65" data-reveal>
+            <span className="eyebrow text-ink/65" data-reveal>
               One more thing
             </span>
             <p
@@ -120,16 +120,16 @@ export default async function ExperiencesPage() {
               data-reveal
             >
               The best thing here is the one we{" "}
-              <em className="text-clay">can’t schedule.</em>
+              <em>can’t schedule.</em>
             </p>
           </div>
           <div className="flex flex-wrap gap-4" data-reveal="zoom" style={{ ["--reveal-delay" as string]: "100ms" }}>
-            <Link href="/contact" className="btn border-paper/30 text-paper">
+            <Link href="/contact" className="btn">
               Plan your stay
             </Link>
             <a
               href="https://wa.me/919541898820"
-              className="link-line self-center font-mono text-[10px] uppercase tracking-[0.2em] text-paper/70"
+              className="link-line self-center font-mono text-[10px] uppercase tracking-[0.2em] text-ink/65"
             >
               WhatsApp us →
             </a>

@@ -17,6 +17,7 @@ export const runtime = "nodejs";
  */
 
 type Submission = {
+  form?: unknown;
   name?: unknown;
   email?: unknown;
   phone?: unknown;
@@ -31,16 +32,6 @@ type Submission = {
   notes?: unknown;
   company?: unknown;
 };
-
-const ROOM_CATEGORIES = [
-  "Premium Room",
-  "Executive Suite",
-  "Executive Duplex",
-  "Family Room",
-] as const;
-
-const MEAL_PLANS = ["EP", "CP", "MAP"] as const;
-
 
 const MAX_PER_WINDOW = 5;
 const WINDOW_MS = 10 * 60 * 1000;
@@ -102,40 +93,16 @@ export async function POST(request: NextRequest) {
     return Response.json({ ok: true }, { status: 201 });
   }
 
+  const form = text(input.form, 16).toLowerCase();
   const name = text(input.name, 80);
   const email = text(input.email, 160);
   const phone = text(input.phone, 40);
   const roomSlug = text(input.room, 96);
   const roomCategory = text(input.roomCategory, 64);
-  const mealPlan = text(input.mealPlan, 8).toUpperCase();
-  const adults = Math.min(10, Math.max(1, Number.parseInt(text(input.adults, 3), 10) || 2));
-  const children = Math.min(10, Math.max(0, Number.parseInt(text(input.children, 3), 10) || 0));
-  const isPopup = roomCategory.length > 0;
+  const isPopup = form === "popup" || roomCategory.length > 0;
   const checkin = text(input.checkin, 10);
   const checkout = text(input.checkout, 10);
   const notes = text(input.notes, 1500);
-
-  // Popup: phone is mandatory; meal plan and room category restricted to known values.
-  if (isPopup) {
-    if (!ROOM_CATEGORIES.includes(roomCategory as (typeof ROOM_CATEGORIES)[number])) {
-      return Response.json(
-        { ok: false, error: "Please choose a valid room category." },
-        { status: 422 },
-      );
-    }
-    if (mealPlan && !MEAL_PLANS.includes(mealPlan as (typeof MEAL_PLANS)[number])) {
-      return Response.json(
-        { ok: false, error: "Please choose a valid meal plan." },
-        { status: 422 },
-      );
-    }
-    if (phone.replace(/\D/g, "").length < 8) {
-      return Response.json(
-        { ok: false, error: "Please add a phone number we can reach you on." },
-        { status: 422 },
-      );
-    }
-  }
 
   if (name.length < 2) {
     return Response.json(
@@ -144,53 +111,55 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!email && !phone) {
+  // Both forms require a phone number. The popup is phone-first; the contact
+  // form used to accept "email or phone", which let requests through without
+  // a number the team could actually call.
+  if (phone.replace(/\D/g, "").length < 8) {
     return Response.json(
-      {
-        ok: false,
-        error: "Please add an email address or a phone number so we can reply.",
-      },
+      { ok: false, error: "Please add a phone number." },
+      { status: 422 },
+    );
+  }
+
+  // The contact form asks for an email (marked *). The popup treats it as
+  // optional, but if one is supplied it still has to be valid.
+  if (!isPopup && !email) {
+    return Response.json(
+      { ok: false, error: "Please add an email address." },
       { status: 422 },
     );
   }
 
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
     return Response.json(
-      { ok: false, error: "That email address does not look right." },
+      { ok: false, error: "Please enter a valid email." },
       { status: 422 },
     );
   }
 
   if ((checkin && !isDate(checkin)) || (checkout && !isDate(checkout))) {
     return Response.json(
-      { ok: false, error: "Please pick valid dates." },
+      { ok: false, error: "Please pick a valid date." },
       { status: 422 },
     );
   }
 
-  if (checkin && checkout && checkout < checkin) {
+  if (checkin && checkout && checkout <= checkin) {
     return Response.json(
-      { ok: false, error: "Check-out cannot be before check-in." },
+      { ok: false, error: "Check-out must be after check-in." },
       { status: 422 },
     );
   }
 
   // Room naming for the lead email: the contact form uses the CMS room name
-  // + price; the homepage popup passes a plain category label instead.
-  let roomName: string;
-  let roomSlugForPayload: string;
+  // + price; the homepage popup no longer asks for a room, so the team
+  // confirms it in the reply.
+  let roomName = "Not specified";
+  let roomSlugForPayload = "";
   let nightlyRate = "";
-  let guests: string;
+  let guests = "2";
 
-  if (isPopup) {
-    roomName = roomCategory;
-    roomSlugForPayload = "";
-    nightlyRate = "";
-    guests =
-      children > 0
-        ? `${adults} adults · ${children} ${children === 1 ? "child" : "children"}`
-        : `${adults} adult${adults === 1 ? "" : "s"}`;
-  } else {
+  if (!isPopup) {
     const rooms = await getRooms();
     const room = rooms.find((item) => item.slug === roomSlug);
     if (!room) {
@@ -203,6 +172,10 @@ export async function POST(request: NextRequest) {
     roomSlugForPayload = room.slug;
     nightlyRate = formatPrice(room.price);
     guests = text(input.guests, 40) || "2";
+  } else if (roomCategory) {
+    // Backwards compatibility for an older popup payload that still sent a
+    // room category. It is no longer part of the form.
+    roomName = roomCategory;
   }
 
   const webhook = process.env.GOOGLE_APPS_SCRIPT_BOOKING_URL;
@@ -236,9 +209,6 @@ export async function POST(request: NextRequest) {
         room: roomName,
         roomSlug: roomSlugForPayload,
         nightlyRate,
-        mealPlan: mealPlan || undefined,
-        adults: isPopup ? adults : undefined,
-        children: isPopup ? children : undefined,
         form: isPopup ? "popup" : "contact",
         checkin,
         checkout,

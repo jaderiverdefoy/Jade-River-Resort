@@ -114,7 +114,7 @@ export default function GalleryMarquee({ items }: { items: GalleryItem[] }) {
               className="font-bold mt-4 text-[clamp(2.1rem,4.5vw,4.3rem)] leading-[0.94]"
               data-reveal
             >
-              Frames the valley <em className="text-clay">already made.</em>
+              Frames the valley <em>already made.</em>
             </h3>
           </div>
           <Link

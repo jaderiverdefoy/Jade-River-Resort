@@ -36,7 +36,7 @@ export default function FaqPage() {
         eyebrow="FAQ · Plain answers"
         title={
           <>
-            Everything, <em className="text-clay">plainly.</em>
+            Everything, <em className="mark-sage">plainly.</em>
           </>
         }
         intro="Location, rates, booking, cancellation, IDs, and what there is to do. Written to be read by people — and understood by answer engines."

@@ -25,7 +25,7 @@ export default function SiteFooter() {
           <div className="md:col-span-6" data-reveal>
             <span className="eyebrow text-paper/65">Jade River Resort</span>
             <p className="mt-6 max-w-[20ch] font-display text-[clamp(2rem,3.9vw,3.7rem)] leading-[0.98] tracking-[-0.04em]">
-              Life, slowed by the <em className="text-clay">river.</em>
+              Life, slowed by the <em>river.</em>
             </p>
             <p className="mt-8 max-w-sm font-mono text-[11px] uppercase leading-[2.1] tracking-[0.16em] text-paper/65">
               {site.address}

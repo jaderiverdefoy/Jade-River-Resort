@@ -65,7 +65,7 @@ export default function FilmSection() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="group absolute left-1/2 top-1/2 flex h-[clamp(100px,12vw,150px)] w-[clamp(100px,12vw,150px)] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-paper/25 bg-walnut text-paper transition-colors duration-300 hover:bg-walnut-brown"
+          className="group absolute left-1/2 top-1/2 flex h-[clamp(100px,12vw,150px)] w-[clamp(100px,12vw,150px)] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-paper/25 bg-forest text-paper transition-colors duration-300 hover:bg-copper"
           aria-label="Play film"
           data-reveal="zoom-lg"
           style={{ ["--reveal-delay" as string]: "120ms" }}
@@ -109,7 +109,7 @@ export default function FilmSection() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="absolute right-5 top-5 flex h-12 w-12 items-center justify-center rounded-full border border-paper/30 text-paper transition-colors hover:border-clay hover:bg-walnut-brown"
+              className="absolute right-5 top-5 flex h-12 w-12 items-center justify-center rounded-full border border-paper/30 text-paper transition-colors hover:border-clay hover:bg-copper"
               aria-label="Close film"
             >
               <span className="relative block h-4 w-4">
@@ -127,7 +127,7 @@ export default function FilmSection() {
             >
               <span className="eyebrow text-ink/65">A note from the property</span>
               <p className="mt-5 font-display text-[clamp(1.8rem,3.6vw,3rem)] leading-[1.02] tracking-[-0.04em]">
-                The film is still in the <em className="text-clay">cutting room.</em>
+                The film is still in the <em>cutting room.</em>
               </p>
               <p className="mt-5 max-w-lg text-[0.95rem] leading-[1.7] text-ink/70">
                 Real property footage is on its way. Until the first cut is ready, the

@@ -357,7 +357,7 @@ export const faqs = [
   },
   {
     q: "How far is Srinagar Airport?",
-    a: "Srinagar Airport is approximately 96 km from the resort, or about 2.5 to 3 hours by road.",
+    a: "Srinagar Airport is approximately 96 km from the resort, or about 1.5 to 2 hours by road.",
   },
   {
     q: "Is the resort suitable for families?",

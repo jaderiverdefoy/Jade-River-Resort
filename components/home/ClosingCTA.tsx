@@ -32,10 +32,7 @@ export default function ClosingCTA({ roomsTotal = 13 }: { roomsTotal?: number })
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-6" data-reveal="zoom" style={{ ["--reveal-delay" as string]: "100ms" }}>
-              <Link
-                href="/contact"
-                className="group inline-flex items-center gap-4 bg-paper px-6 py-4 font-mono text-[10px] uppercase tracking-[0.18em] text-charcoal transition-colors duration-300 hover:bg-walnut-brown hover:text-paper"
-              >
+              <Link href="/contact" className="btn btn-clay group">
                 Reserve directly
                 <svg
                   width="14"

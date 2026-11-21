@@ -59,6 +59,12 @@ export default function BookingForm({
   const [company, setCompany] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{
+    name?: string;
+    email?: string;
+    phone?: string;
+    checkout?: string;
+  }>({});
 
   const selected = rooms.find((r) => r.slug === room) ?? rooms[0];
 
@@ -87,22 +93,22 @@ export default function BookingForm({
 
     setError(null);
 
-    if (name.trim().length < 2) {
-      setError("Please add your name.");
-      return;
+    const nextErrors: typeof errors = {};
+    if (name.trim().length < 2) nextErrors.name = "Add your name.";
+    if (!email.trim()) {
+      nextErrors.email = "Add your email.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) {
+      nextErrors.email = "Enter a valid email.";
     }
-    if (!email.trim() && !phone.trim()) {
-      setError("Please add an email address or a phone number so we can reply.");
-      return;
+    if (phone.replace(/\D/g, "").length < 8) {
+      nextErrors.phone = "Add a valid phone number.";
     }
-    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) {
-      setError("That email address does not look right.");
-      return;
+    if (checkin && checkout && checkout <= checkin) {
+      nextErrors.checkout = "Check-out must be after check-in.";
     }
-    if (checkin && checkout && checkout < checkin) {
-      setError("Check-out cannot be before check-in.");
-      return;
-    }
+
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
 
     setSending(true);
 
@@ -111,6 +117,7 @@ export default function BookingForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          form: "contact",
           name,
           email,
           phone,
@@ -175,7 +182,11 @@ export default function BookingForm({
   }
 
   return (
-    <form className="grid gap-8" onSubmit={submit} noValidate>
+    <form
+      className="grid gap-8 border border-walnut/30 bg-paper-2 p-5 shadow-[0_20px_55px_rgba(67,41,17,0.09)] sm:p-7 md:p-8"
+      onSubmit={submit}
+      noValidate
+    >
       <fieldset className="grid gap-3">
         <legend className="eyebrow mb-1 text-ink/65">01 — Choose a room <span className="text-clay">*</span></legend>
         <div className="grid gap-2">
@@ -228,14 +239,22 @@ export default function BookingForm({
       </fieldset>
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field label={<>02 — Your name <span className="text-clay">*</span></>} htmlFor="name">
+        <Field
+          label={<>02 — Your name <span className="text-clay">*</span></>}
+          htmlFor="name"
+          error={errors.name}
+        >
           <input
             id="name"
             name="name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (errors.name) setErrors({ ...errors, name: undefined });
+            }}
             placeholder="Full name"
             autoComplete="name"
+            aria-invalid={Boolean(errors.name)}
             required
             className="w-full bg-transparent py-3 text-[1rem] outline-none placeholder:text-ink/65"
           />
@@ -255,27 +274,45 @@ export default function BookingForm({
             ))}
           </select>
         </Field>
-        <Field label={<>04 — Email <span className="text-clay">*</span></>} htmlFor="email">
+        <Field
+          label={<>04 — Email <span className="text-clay">*</span></>}
+          htmlFor="email"
+          error={errors.email}
+        >
           <input
             id="email"
             name="email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (errors.email) setErrors({ ...errors, email: undefined });
+            }}
             placeholder="you@example.com"
             autoComplete="email"
+            aria-invalid={Boolean(errors.email)}
+            required
             className="w-full bg-transparent py-3 text-[1rem] outline-none placeholder:text-ink/65"
           />
         </Field>
-        <Field label={<>05 — Phone or WhatsApp <span className="text-clay">*</span></>} htmlFor="phone">
+        <Field
+          label={<>05 — Phone <span className="text-clay">*</span></>}
+          htmlFor="phone"
+          error={errors.phone}
+        >
           <input
             id="phone"
             name="phone"
             type="tel"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="+91 …"
+            onChange={(e) => {
+              setPhone(e.target.value);
+              if (errors.phone) setErrors({ ...errors, phone: undefined });
+            }}
+            placeholder="+91 98765 43210"
             autoComplete="tel"
+            aria-invalid={Boolean(errors.phone)}
+            required
             className="w-full bg-transparent py-3 text-[1rem] outline-none placeholder:text-ink/65"
           />
         </Field>
@@ -289,13 +326,18 @@ export default function BookingForm({
             className="w-full bg-transparent py-3 text-[1rem] outline-none"
           />
         </Field>
-        <Field label="07 — Check-out" htmlFor="checkout">
+        <Field label="07 — Check-out" htmlFor="checkout" error={errors.checkout}>
           <input
             id="checkout"
             name="checkout"
             type="date"
             value={checkout}
-            onChange={(e) => setCheckout(e.target.value)}
+            min={checkin || undefined}
+            onChange={(e) => {
+              setCheckout(e.target.value);
+              if (errors.checkout) setErrors({ ...errors, checkout: undefined });
+            }}
+            aria-invalid={Boolean(errors.checkout)}
             className="w-full bg-transparent py-3 text-[1rem] outline-none"
           />
         </Field>
@@ -308,7 +350,7 @@ export default function BookingForm({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}
-          placeholder="Anniversary, children's ages, a pickup from Srinagar…"
+          placeholder="Anything else?"
           className="w-full resize-none bg-transparent py-3 text-[1rem] outline-none placeholder:text-ink/65"
         />
       </Field>
@@ -377,17 +419,28 @@ function Field({
   label,
   htmlFor,
   children,
+  error,
 }: {
   label: React.ReactNode;
   htmlFor: string;
   children: React.ReactNode;
+  error?: string;
 }) {
   return (
-    <div className="group border-b border-line pb-1 focus-within:border-clay">
+    <div
+      className={`group border-b pb-1 ${
+        error ? "border-clay" : "border-line focus-within:border-clay"
+      }`}
+    >
       <label htmlFor={htmlFor} className="eyebrow block text-ink/65">
         {label}
       </label>
       {children}
+      {error ? (
+        <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-clay">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

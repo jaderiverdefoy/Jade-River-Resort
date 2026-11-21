@@ -32,7 +32,7 @@ export default async function BlogPage() {
         eyebrow="Blog · Notes"
         title={
           <>
-            Notes from the <em className="text-clay">slow side.</em>
+            Notes from the <em className="mark-sage">slow side.</em>
           </>
         }
         intro="Field notes, small observations, and the occasional practical guide. Written from the property, between cups of tea."
@@ -105,7 +105,7 @@ export default async function BlogPage() {
                       {post.excerpt}
                     </p>
                   </div>
-                  <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line transition-all duration-500 group-hover:border-walnut group-hover:bg-walnut group-hover:text-paper">
+                  <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line transition-all duration-500 group-hover:border-walnut group-hover:bg-forest group-hover:text-paper">
                     <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                       <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" strokeWidth="1.2" />
                     </svg>

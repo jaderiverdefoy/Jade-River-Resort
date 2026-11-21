@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -67,14 +68,20 @@ export default function SiteNav() {
         <div className="shell flex h-[68px] items-center justify-between gap-6 md:h-[80px]">
           <Link
             href="/"
-            className="group flex items-baseline gap-2.5"
+            aria-label="Jade River Resort — home"
+            className="group flex items-center"
           >
-            <span className="font-display text-[1.4rem] leading-none tracking-[-0.045em] md:text-[1.6rem]">
-              Jade<span className="text-clay">.</span>River
-            </span>
-            <span className={cn("eyebrow hidden pb-[2px] text-[9px] lg:block", overHero ? "text-paper/80" : "text-ink/65")}>
-              Resort
-            </span>
+            <Image
+              src="/images/jade/logo-defoy.png"
+              alt="De Foy"
+              width={480}
+              height={430}
+              priority
+              className={cn(
+                "h-10 w-auto transition-[filter] duration-500 md:h-12",
+                overHero && "drop-shadow-[0_1px_8px_rgba(0,0,0,0.55)]",
+              )}
+            />
           </Link>
 
           <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
@@ -102,16 +109,15 @@ export default function SiteNav() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link
-              href="/contact"
-              className={cn(
-                "site-nav-cta btn hidden !py-3 !px-5 sm:inline-flex",
-                overHero ? "!border-paper/70 !text-paper" : "btn-clay",
-              )}
-            >
-              Reserve directly
-              <Arrow />
-            </Link>
+            {pathname !== "/contact" ? (
+              <Link
+                href="/contact"
+                className="site-nav-cta btn btn-clay hidden !py-3 !px-5 sm:inline-flex"
+              >
+                Reserve directly
+                <Arrow />
+              </Link>
+            ) : null}
 
             <button
               type="button"
@@ -137,9 +143,19 @@ export default function SiteNav() {
             transition={{ duration: 0.75, ease: EASE }}
           >
             <div className="shell flex h-[68px] items-center justify-between md:h-[80px]">
-              <span className="font-display text-[1.4rem] leading-none tracking-[-0.045em]">
-                Jade<span className="text-clay">.</span>River
-              </span>
+              <Link
+                href="/"
+                onClick={() => setOpen(false)}
+                aria-label="Jade River Resort — home"
+              >
+                <Image
+                  src="/images/jade/logo-defoy.png"
+                  alt="De Foy"
+                  width={480}
+                  height={430}
+                  className="h-11 w-auto brightness-0 invert"
+                />
+              </Link>
               <button
                 type="button"
                 onClick={() => setOpen(false)}

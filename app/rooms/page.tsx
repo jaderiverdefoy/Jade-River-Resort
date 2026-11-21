@@ -33,7 +33,7 @@ export default async function RoomsPage() {
             {total === 13 ? "Thirteen" : total} rooms.
             <br />
             {numberWord(rooms.length)} ways to{" "}
-            <em className="text-clay">slow down.</em>
+            <em className="mark-sage">slow down.</em>
           </>
         }
         intro="Nine balcony rooms, two suites, two duplex family rooms. Each one opens toward the water or the pines, and none of them are in a hurry."
@@ -57,10 +57,10 @@ export default async function RoomsPage() {
         <div className="shell grid gap-10 md:grid-cols-12 md:items-center">
           <p className="font-display text-[clamp(1.8rem,3.4vw,3.2rem)] leading-[1.05] md:col-span-7" data-reveal>
             Not sure which room? Tell us who is coming and we will{" "}
-            <em className="text-clay">place you properly.</em>
+            <em>place you properly.</em>
           </p>
           <div className="flex flex-wrap gap-4 md:col-span-5 md:justify-end" data-reveal="zoom" style={{ ["--reveal-delay" as string]: "100ms" }}>
-            <Link href="/contact" className="btn border-paper/30 text-paper">
+            <Link href="/contact" className="btn btn-paper">
               Reserve directly
             </Link>
             <a

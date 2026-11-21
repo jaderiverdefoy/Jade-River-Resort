@@ -24,7 +24,7 @@ export default async function ThankYouPage() {
           <>
             Thank you.
             <br />
-            The river is <em className="text-clay">already waiting.</em>
+            The river is <em>already waiting.</em>
           </>
         }
         intro="Your request has reached the resort team. A person — not a portal — will reply with availability and the final rate, usually within the hour on working days."

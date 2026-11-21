@@ -9,8 +9,12 @@ import { site } from "@/lib/content";
  * `jr:open-booking`, and the popup opens itself a few seconds after the page
  * settles so a ready-to-book visitor does not have to hunt for it. Consistent
  * with the contact form: `/api/booking` forwards the enquiry to the Google
- * Apps Script, which emails the team and logs the row to the Bookings sheet;
+ * Apps Script, which emails the team and logs the row to the Popup sheet tab;
  * the browser lands on `/thank-you`.
+ *
+ * The popup deliberately asks for the smallest useful set — name, phone,
+ * email and a travel date — on both desktop and mobile. The team confirms the
+ * room, meal plan and dates on the reply.
  */
 export const OPEN_BOOKING_EVENT = "jr:open-booking";
 
@@ -18,20 +22,13 @@ export const OPEN_BOOKING_EVENT = "jr:open-booking";
  *  and for a visitor to settle into the hero first. */
 const AUTO_OPEN_MS = 4500;
 
-const ROOM_OPTIONS = [
-  "Premium Room",
-  "Executive Suite",
-  "Executive Duplex",
-  "Family Room",
-] as const;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-const MEAL_PLANS = [
-  { id: "MAP", label: "MAP", detail: "Breakfast + dinner" },
-  { id: "CP", label: "CP", detail: "Breakfast only" },
-  { id: "EP", label: "EP", detail: "Room only, no meals" },
-] as const;
-
-type MealPlan = (typeof MEAL_PLANS)[number]["id"];
+type Errors = {
+  name?: string;
+  phone?: string;
+  email?: string;
+};
 
 export default function BookingPopup() {
   const router = useRouter();
@@ -46,17 +43,13 @@ export default function BookingPopup() {
   const autoOpened = useRef(false);
 
   const [open, setOpen] = useState(false);
-  const [room, setRoom] = useState<(typeof ROOM_OPTIONS)[number]>("Executive Suite");
-  const [mealPlan, setMealPlan] = useState<MealPlan>("MAP");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [checkin, setCheckin] = useState("");
-  const [checkout, setCheckout] = useState("");
-  const [adults, setAdults] = useState(2);
-  const [children, setChildren] = useState(0);
-  const [notes, setNotes] = useState("");
+  const [email, setEmail] = useState("");
+  const [travelDate, setTravelDate] = useState("");
   const [company, setCompany] = useState("");
   const [sending, setSending] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
   const [error, setError] = useState<string | null>(null);
 
   // Listen for the Reserve button, and open on its own shortly after landing
@@ -111,47 +104,42 @@ export default function BookingPopup() {
     };
   }, [open]);
 
-  const guests = `${adults} adult${adults === 1 ? "" : "s"}${
-    children ? ` · ${children} ${children === 1 ? "child" : "children"}` : ""
-  }`;
-
   const waMessage = useMemo(() => {
     const lines = [
       "Hello Jade River Resort, I would like to book a stay.",
       "",
-      `Room: ${room}`,
-      `Meal plan: ${mealPlan}`,
       name ? `Name: ${name}` : null,
       phone ? `Phone: ${phone}` : null,
-      checkin ? `Check-in: ${checkin}` : null,
-      checkout ? `Check-out: ${checkout}` : null,
-      `Guests: ${guests}`,
-      notes ? `Notes: ${notes}` : null,
+      email ? `Email: ${email}` : null,
+      travelDate ? `Travel date: ${travelDate}` : null,
       "",
       "Please confirm availability and next steps.",
     ].filter(Boolean);
     return lines.join("\n");
-  }, [room, mealPlan, name, phone, checkin, checkout, guests, notes]);
+  }, [name, phone, email, travelDate]);
 
   const waHref = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(waMessage)}`;
+
+  const validate = (): Errors => {
+    const next: Errors = {};
+    if (name.trim().length < 2) next.name = "Add your name.";
+    if (phone.replace(/\D/g, "").length < 8) {
+      next.phone = "Add a valid phone number.";
+    }
+    if (email.trim() && !EMAIL_RE.test(email.trim())) {
+      next.email = "Enter a valid email.";
+    }
+    return next;
+  };
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (sending) return;
     setError(null);
 
-    if (name.trim().length < 2) {
-      setError("Please add your name.");
-      return;
-    }
-    if (phone.replace(/\D/g, "").length < 8) {
-      setError("Please add a phone number we can reach you on.");
-      return;
-    }
-    if (checkin && checkout && checkout < checkin) {
-      setError("Check-out cannot be before check-in.");
-      return;
-    }
+    const next = validate();
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
 
     setSending(true);
     try {
@@ -159,16 +147,11 @@ export default function BookingPopup() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          form: "popup",
           name,
           phone,
-          roomCategory: room,
-          mealPlan,
-          checkin,
-          checkout,
-          adults,
-          children,
-          guests,
-          notes,
+          email,
+          checkin: travelDate,
           company,
         }),
       });
@@ -185,13 +168,13 @@ export default function BookingPopup() {
       try {
         sessionStorage.setItem(
           "jr-booking",
-          JSON.stringify({ room, roomSlug: "", checkin, checkout, guests, mealPlan }),
+          JSON.stringify({ checkin: travelDate }),
         );
       } catch {
         // Same as the contact form: storage-blocked visitors get a generic thank-you page.
       }
 
-      router.push(`/thank-you#room=${encodeURIComponent(room)}`);
+      router.push("/thank-you");
     } catch (submitError) {
       setError(
         submitError instanceof Error
@@ -214,7 +197,7 @@ export default function BookingPopup() {
     >
       <button
         type="button"
-        className="absolute inset-0 cursor-default bg-walnut/80"
+        className="absolute inset-0 cursor-default bg-charcoal/80"
         aria-label="Close booking popup"
         onClick={() => {
           // Ignore a tap that was already in progress when the popup opened.
@@ -222,7 +205,7 @@ export default function BookingPopup() {
         }}
       />
 
-      <div className="relative max-h-[calc(100svh-2rem)] w-full max-w-[26rem] overflow-y-auto rounded-md border border-walnut/40 bg-paper shadow-[0_30px_80px_rgba(20,24,21,0.5)] sm:max-h-[90svh] sm:max-w-[44rem]">
+      <div className="popup-scroll relative max-h-[calc(100svh-2rem)] w-full max-w-[26rem] overflow-y-auto rounded-md border border-walnut/40 bg-paper shadow-[0_30px_80px_rgba(20,24,21,0.5)] sm:max-h-[90svh] sm:max-w-[27rem]">
         <button
           type="button"
           onClick={() => setOpen(false)}
@@ -240,214 +223,84 @@ export default function BookingPopup() {
             Book your stay.
           </h2>
 
-          <form className="mt-3 grid gap-2 short:gap-1.5 micro:gap-1" onSubmit={submit} noValidate>
-            <fieldset className="grid gap-1">
-              <legend className="eyebrow mb-0.5 text-ink/65">01 — Room <span className="text-clay">*</span></legend>
-
-              {/* Phones get one dropdown where desktop gets the four cards. */}
-              <div className="relative sm:hidden">
-                <select
-                  id="popup-room"
-                  aria-label="Room category"
-                  value={room}
-                  onChange={(event) =>
-                    setRoom(event.target.value as (typeof ROOM_OPTIONS)[number])
-                  }
-                  className="w-full appearance-none border border-line bg-paper px-3 py-2.5 pr-9 font-display text-[0.95rem] text-ink outline-none focus:border-clay"
-                >
-                  {ROOM_OPTIONS.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-                <Chevron />
-              </div>
-
-              <div className="hidden gap-1.5 sm:grid sm:grid-cols-2 micro:pr-10">
-                {ROOM_OPTIONS.map((option) => (
-                  <label
-                    key={option}
-                    className={`flex cursor-pointer items-center gap-2.5 border px-3.5 py-2.5 transition-colors duration-200 short:py-2 ${
-                      room === option
-                        ? "border-ink bg-forest text-paper"
-                        : "border-line hover:border-ink/40"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="room-category"
-                      value={option}
-                      checked={room === option}
-                      onChange={() => setRoom(option)}
-                      className="sr-only"
-                    />
-                    <span
-                      className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border ${
-                        room === option ? "border-paper" : "border-ink/30"
-                      }`}
-                    >
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full transition-transform ${
-                          room === option ? "scale-100 bg-copper" : "scale-0"
-                        }`}
-                      />
-                    </span>
-                    <span className="font-display text-[0.95rem] leading-tight">{option}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-
-            <fieldset className="grid gap-1">
-              <legend className="eyebrow mb-0.5 text-ink/65">02 — Meal plan <span className="text-clay">*</span></legend>
-
-              <div className="relative sm:hidden">
-                <select
-                  id="popup-meal-plan"
-                  aria-label="Meal plan"
-                  value={mealPlan}
-                  onChange={(event) => setMealPlan(event.target.value as MealPlan)}
-                  className="w-full appearance-none border border-line bg-paper px-3 py-2.5 pr-9 font-display text-[0.95rem] text-ink outline-none focus:border-clay"
-                >
-                  {MEAL_PLANS.map((plan) => (
-                    <option key={plan.id} value={plan.id}>
-                      {plan.id} — {plan.detail}
-                    </option>
-                  ))}
-                </select>
-                <Chevron />
-              </div>
-
-              <div className="hidden gap-1.5 sm:grid sm:grid-cols-3">
-                {MEAL_PLANS.map((plan) => (
-                  <label
-                    key={plan.id}
-                    className={`flex cursor-pointer flex-col gap-0.5 border px-3.5 py-2 transition-colors duration-200 short:py-1.5 ${
-                      mealPlan === plan.id
-                        ? "border-ink bg-forest text-paper"
-                        : "border-line hover:border-ink/40"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="meal-plan"
-                      value={plan.id}
-                      checked={mealPlan === plan.id}
-                      onChange={() => setMealPlan(plan.id)}
-                      className="sr-only"
-                    />
-                    <span className="font-mono text-[9px] uppercase tracking-[0.18em]">
-                      {plan.id}
-                    </span>
-                    <span
-                      className={`text-[0.85rem] leading-snug ${
-                        mealPlan === plan.id ? "text-paper/70" : "text-ink/65"
-                      }`}
-                    >
-                      {plan.detail}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-
-            <div className="grid grid-cols-2 gap-3">
-              <Field label={<>03 — Your name <span className="text-clay">*</span></>} htmlFor="popup-name">
+          <form className="mt-3 grid gap-3 short:gap-2" onSubmit={submit} noValidate>
+            <div className="grid gap-3 short:gap-2">
+              <Field
+                label={<>01 — Your name <span className="text-clay">*</span></>}
+                htmlFor="popup-name"
+                error={errors.name}
+              >
                 <input
                   ref={nameRef}
                   id="popup-name"
                   name="name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (errors.name) setErrors({ ...errors, name: undefined });
+                  }}
                   placeholder="Full name"
                   autoComplete="name"
+                  aria-invalid={Boolean(errors.name)}
                   required
                   className="w-full bg-transparent py-2 text-[0.95rem] outline-none placeholder:text-ink/65 short:py-1.5"
                 />
               </Field>
-              <Field label={<>04 — Phone <span className="text-clay">*</span></>} htmlFor="popup-phone">
+
+              <Field
+                label={<>02 — Phone <span className="text-clay">*</span></>}
+                htmlFor="popup-phone"
+                error={errors.phone}
+              >
                 <input
                   id="popup-phone"
                   name="phone"
                   type="tel"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+91 …"
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    if (errors.phone) setErrors({ ...errors, phone: undefined });
+                  }}
+                  placeholder="+91 98765 43210"
                   autoComplete="tel"
+                  aria-invalid={Boolean(errors.phone)}
                   required
                   className="w-full bg-transparent py-2 text-[0.95rem] outline-none placeholder:text-ink/65 short:py-1.5"
                 />
               </Field>
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="05 — Check-in" htmlFor="popup-checkin">
+              <Field
+                label="03 — Email"
+                htmlFor="popup-email"
+                error={errors.email}
+              >
                 <input
-                  id="popup-checkin"
+                  id="popup-email"
+                  name="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors({ ...errors, email: undefined });
+                  }}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  aria-invalid={Boolean(errors.email)}
+                  className="w-full bg-transparent py-2 text-[0.95rem] outline-none placeholder:text-ink/65 short:py-1.5"
+                />
+              </Field>
+
+              <Field label="04 — Travel date" htmlFor="popup-travel-date">
+                <input
+                  id="popup-travel-date"
                   name="checkin"
                   type="date"
-                  value={checkin}
-                  onChange={(e) => setCheckin(e.target.value)}
-                  className="w-full bg-transparent py-2 text-[0.95rem] outline-none short:py-1.5"
-                />
-              </Field>
-              <Field label="06 — Check-out" htmlFor="popup-checkout">
-                <input
-                  id="popup-checkout"
-                  name="checkout"
-                  type="date"
-                  value={checkout}
-                  onChange={(e) => setCheckout(e.target.value)}
+                  value={travelDate}
+                  onChange={(e) => setTravelDate(e.target.value)}
                   className="w-full bg-transparent py-2 text-[0.95rem] outline-none short:py-1.5"
                 />
               </Field>
             </div>
-
-            {/* Guests are desktop-only — on a phone the card stays short and
-                the request defaults to two adults, which the team confirms. */}
-            <fieldset className="hidden gap-1 [@media(min-width:640px)_and_(min-height:641px)]:grid">
-              <legend className="eyebrow mb-0.5 text-ink/65">07 — Guests</legend>
-
-              <div className="grid gap-2 sm:grid-cols-2">
-                <Stepper
-                  label="Adults"
-                  value={adults}
-                  min={1}
-                  max={10}
-                  onChange={setAdults}
-                />
-                <Stepper
-                  label="Children"
-                  value={children}
-                  min={0}
-                  max={10}
-                  onChange={setChildren}
-                />
-              </div>
-            </fieldset>
-
-            <Field
-              className="tiny:hidden"
-              label={
-                <>
-                  <span className="sm:hidden">07</span>
-                  <span className="hidden sm:inline">08</span>
-                  {" — Anything we should know"}
-                </>
-              }
-              htmlFor="popup-notes"
-            >
-              <textarea
-                id="popup-notes"
-                name="notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={1}
-                placeholder="Anniversary, pickup, children's ages…"
-                className="w-full resize-none bg-transparent py-2 text-[0.95rem] outline-none placeholder:text-ink/65 short:py-1.5"
-              />
-            </Field>
 
             {/* Honeypot */}
             <div className="hidden" aria-hidden="true">
@@ -499,82 +352,32 @@ export default function BookingPopup() {
   );
 }
 
-/** Chevron for the mobile dropdowns. */
-function Chevron() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      fill="none"
-      aria-hidden="true"
-      className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-ink/60"
-    >
-      <path d="M2 4.5 6 8.5l4-4" stroke="currentColor" strokeWidth="1.2" />
-    </svg>
-  );
-}
-
-function Stepper({
-  label,
-  value,
-  min,
-  max,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  onChange: (value: number) => void;
-}) {
-  return (
-    <div className="flex items-center justify-between border border-line px-3 py-2">
-      <span className="eyebrow text-ink/65">{label}</span>
-      <span className="flex items-center gap-3">
-        <button
-          type="button"
-          aria-label="Decrease"
-          disabled={value <= min}
-          onClick={() => onChange(Math.max(min, value - 1))}
-          className="flex h-7 w-7 items-center justify-center border border-line text-ink transition-colors disabled:opacity-30 enabled:hover:border-ink"
-        >
-          −
-        </button>
-        <span className="min-w-[2ch] text-center font-mono text-[1.05rem] tabular-nums">
-          {value}
-        </span>
-        <button
-          type="button"
-          aria-label="Increase"
-          disabled={value >= max}
-          onClick={() => onChange(Math.min(max, value + 1))}
-          className="flex h-7 w-7 items-center justify-center border border-line text-ink transition-colors disabled:opacity-30 enabled:hover:border-ink"
-        >
-          +
-        </button>
-      </span>
-    </div>
-  );
-}
-
 function Field({
   label,
   htmlFor,
   children,
-  className,
+  error,
 }: {
   label: React.ReactNode;
   htmlFor: string;
   children: React.ReactNode;
-  className?: string;
+  error?: string;
 }) {
   return (
-    <div className={`group border-b border-line pb-1 focus-within:border-clay ${className ?? ""}`}>
+    <div
+      className={`group border-b pb-1 ${
+        error ? "border-clay" : "border-line focus-within:border-clay"
+      }`}
+    >
       <label htmlFor={htmlFor} className="eyebrow block text-ink/65">
         {label}
       </label>
       {children}
+      {error ? (
+        <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-clay">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

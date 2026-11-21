@@ -39,7 +39,7 @@ export default function GuestNotes({
               className="font-bold mt-4 text-[clamp(2.1rem,4.2vw,4.1rem)] leading-[0.94]"
               data-reveal
             >
-              Small numbers. <em className="text-clay">That’s the point.</em>
+              <em className="mark-sage">Small numbers.</em> That’s the point.
             </h3>
           </div>
           <p className="body-copy max-w-sm text-paper/80 md:col-span-4 md:col-start-9" data-reveal>
@@ -73,7 +73,7 @@ export default function GuestNotes({
               type="button"
               onClick={() => nudge(-1)}
               aria-label="Previous reviews"
-              className="flex h-10 w-10 items-center justify-center border border-line transition-colors hover:border-walnut hover:bg-walnut hover:text-paper"
+              className="flex h-10 w-10 items-center justify-center border border-line transition-colors hover:border-walnut hover:bg-forest hover:text-paper"
             >
               <Arrow dir="left" />
             </button>
@@ -81,7 +81,7 @@ export default function GuestNotes({
               type="button"
               onClick={() => nudge(1)}
               aria-label="Next reviews"
-              className="flex h-10 w-10 items-center justify-center border border-line transition-colors hover:border-walnut hover:bg-walnut hover:text-paper"
+              className="flex h-10 w-10 items-center justify-center border border-line transition-colors hover:border-walnut hover:bg-forest hover:text-paper"
             >
               <Arrow dir="right" />
             </button>

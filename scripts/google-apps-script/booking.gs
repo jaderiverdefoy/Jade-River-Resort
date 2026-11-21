@@ -2,42 +2,37 @@
  * Jade River Resort — booking form receiver (Google Apps Script)
  * =============================================================
  *
- * The website posts booking enquiries from /contact to this script. The script
- * emails the resort team, optionally sends the guest a short acknowledgement,
- * optionally logs the request to a Google Sheet, and answers with JSON.
+ * The website posts booking enquiries from /contact and from the homepage
+ * "Reserve" popup to this script. The script emails the resort team, optionally
+ * sends the guest a short acknowledgement, logs the request to a Google Sheet,
+ * and answers with JSON.
  *
  * SETUP — one time, about ten minutes
  * -----------------------------------
- * Recommended (script lives inside the bookings spreadsheet, so there is no
- * spreadsheet ID to copy):
- * 1. Create a Google Sheet, e.g. "Jade River — Bookings".
- * 2. In that sheet open Extensions → Apps Script.
- * 3. Delete the placeholder Code.gs and paste this whole file in.
- * 4. Edit NOTIFY_EMAIL, BOOKING_SECRET and GUEST_ACK below.
+ * 1. Open the bookings spreadsheet:
+ *      https://docs.google.com/spreadsheets/d/1wnsjgERm_9Qd5fx3hZP922pZD6VH9v8Fc_yk6tCaAoE/edit
+ * 2. Extensions → Apps Script. Delete the placeholder Code.gs and paste this
+ *    whole file in.
+ * 3. Edit NOTIFY_EMAIL and BOOKING_SECRET below.
  *    BOOKING_SECRET must be the same value as BOOKING_WEBHOOK_SECRET in the
  *    website environment. Leave both empty to disable the check.
- * 5. Optional: run setupBookingSheet once and authorise. It creates the
- *    "Bookings" (contact form) and "Popup" (homepage Reserve popup) tabs
- *    with their header rows. If you skip this, the tabs and headers are
- *    created automatically on the first booking for each form.
- * 6. Click Deploy → New deployment → select type "Web app".
+ * 4. Optional: run setupBookingSheet once and authorise. It creates the
+ *    "Bookings" (contact form) and "Popup" (homepage Reserve popup) tabs with
+ *    their header rows. If you skip this, the tabs and headers are created
+ *    automatically on the first booking for each form.
+ * 5. Click Deploy → New deployment → select type "Web app".
  *      Description:      Booking form
  *      Execute as:       Me
  *      Who has access:   Anyone
  *    Click Deploy, authorise the script, then copy the Web app URL.
  *    It looks like https://script.google.com/macros/s/AKfy…/exec
- * 7. In the website environment (.env.local locally, and the production
+ * 6. In the website environment (.env.local locally, and the production
  *    environment) add:
  *      GOOGLE_APPS_SCRIPT_BOOKING_URL=https://script.google.com/macros/s/…/exec
  *      BOOKING_WEBHOOK_SECRET=<the same secret as BOOKING_SECRET below>
- * 8. Redeploy the website. Submit one test booking and confirm the email
+ * 7. Redeploy the website. Submit one test booking and confirm the email
  *    arrives, the guest acknowledgement lands in the guest inbox, and the row
- *    appears in the "Bookings" tab.
- *
- * Alternative (standalone script at https://script.google.com):
- * Create a new project, paste this file, then copy the spreadsheet ID from the
- * sheet URL (https://docs.google.com/spreadsheets/d/<THIS PART>/edit) into
- * SHEET_ID below. Everything else is the same.
+ *    appears in the correct tab.
  *
  * AFTER EDITING THIS FILE
  * -----------------------
@@ -48,9 +43,9 @@
  * -------------
  * The website has two booking forms with different fields:
  *   • /contact ("Bookings" tab) — name, email, phone, CMS room + rate,
- *     check-in / check-out, guest count.
- *   • homepage "Reserve" popup ("Popup" tab) — phone-only, no email, plus
- *     meal plan (EP / CP / MAP) and adults / children steppers.
+ *     check-in / check-out, guest count, notes.
+ *   • homepage "Reserve" popup ("Popup" tab) — name, phone, email and one
+ *     travel date. The team confirms the room and meal plan in the reply.
  * Each accepted request is logged to the tab for the form it came from, with
  * headers matching what that form actually collects. Tabs and header rows are
  * created automatically on the first booking — or run setupBookingSheet()
@@ -85,18 +80,19 @@ var GUEST_ACK = true;
 var LOG_TO_SHEET = true;
 
 /**
- * Spreadsheet to log into. Leave empty when the script is bound to the
- * spreadsheet (Extensions → Apps Script); it then uses that spreadsheet.
+ * Spreadsheet to log into. The project sheet is preset; when the script is
+ * bound to the spreadsheet this can stay empty and getActiveSpreadsheet()
+ * is used instead.
  */
-var SHEET_ID = "";
+var SHEET_ID = "1wnsjgERm_9Qd5fx3hZP922pZD6VH9v8Fc_yk6tCaAoE";
 
 /** Tab for the /contact form (email included, CMS room + rate). */
 var TAB_CONTACT = "Bookings";
 
-/** Tab for the homepage "Reserve" popup (phone-only, meal plan, steppers). */
+/** Tab for the homepage "Reserve" popup (name, phone, email, travel date). */
 var TAB_POPUP = "Popup";
 
-/** Header rows — one per tab. Must match the row order built in doPost(). */
+/** Header rows — one per tab. Order must match the rows built in doPost(). */
 var HEADERS_CONTACT = [
   "Received",
   "Name",
@@ -115,15 +111,9 @@ var HEADERS_POPUP = [
   "Received",
   "Name",
   "Phone",
-  "Room",
-  "Meal plan",
-  "Adults",
-  "Children",
-  "Check-in",
-  "Check-out",
-  "Guests",
+  "Email",
+  "Travel date",
   "Page",
-  "Notes",
 ];
 
 // ---------------------------------------------------------------------------
@@ -150,19 +140,22 @@ function doPost(e) {
     var guests = clean_(data.guests, 40);
     var notes = clean_(data.notes, 1500);
     var rate = clean_(data.nightlyRate, 40);
-    var mealPlan = clean_(data.mealPlan, 8);
-    var adults = clean_(data.adults, 4);
-    var children = clean_(data.children, 4);
     var submittedAt = clean_(data.submittedAt, 40) || new Date().toISOString();
     var source = clean_(data.source, 200);
     var form = clean_(data.form, 16);
     var isPopup = /^popup$/i.test(form) || /popup/i.test(source);
 
-    if (name.length < 2 || room.length < 1) {
-      return json_({ ok: false, error: "Name and room are required." });
+    if (name.length < 2) {
+      return json_({ ok: false, error: "Name is required." });
     }
-    if (!email && !phone) {
-      return json_({ ok: false, error: "Add an email address or phone number." });
+    if (phone.replace(/\D/g, "").length < 8) {
+      return json_({ ok: false, error: "A phone number is required." });
+    }
+    if (!isPopup && !email) {
+      return json_({ ok: false, error: "An email address is required." });
+    }
+    if (!isPopup && room.length < 1) {
+      return json_({ ok: false, error: "Choose a room." });
     }
 
     var received = new Date(submittedAt);
@@ -170,33 +163,54 @@ function doPost(e) {
       ? submittedAt
       : Utilities.formatDate(received, "Asia/Kolkata", "d MMM yyyy, HH:mm 'IST'");
 
-    var subject = "Booking request — " + name + " · " + room;
+    var travelLabel = dateLabel_(checkin);
+    var checkinLabel = dateLabel_(checkin);
+    var checkoutLabel = dateLabel_(checkout);
+
+    var subject = isPopup
+      ? "Booking request — " + name + (travelLabel ? " · " + travelLabel : "")
+      : "Booking request — " + name + " · " + room;
+
+    var rows = isPopup
+      ? [
+          ["Form", "Reserve popup · homepage"],
+          ["Received", receivedLabel],
+          ["Name", name],
+          ["Phone", phone],
+          ["Email", email || "—"],
+          ["Travel date", travelLabel || "—"],
+          ["Page", source || "—"],
+        ]
+      : [
+          ["Form", "Contact form · /contact"],
+          ["Received", receivedLabel],
+          ["Name", name],
+          ["Email", email],
+          ["Phone", phone],
+          ["Room", rate ? room + " · " + rate + "/night" : room],
+          ["Check-in", checkinLabel || "—"],
+          ["Check-out", checkoutLabel || "—"],
+          ["Guests", guests || "—"],
+          ["Page", source || "—"],
+        ];
+
     var plainBody = [
-      "New booking request from " + source,
+      "JADE RIVER RESORT",
+      isPopup ? "New booking request · Reserve popup" : "New booking request · Contact form",
       "",
-      "Received:  " + receivedLabel,
-      "Name:      " + name,
-      "Email:     " + (email || "—"),
-      "Phone:     " + (phone || "—"),
-      "Room:      " + room + (rate ? " (" + rate + " / night)" : ""),
-      mealPlan ? "Meal plan: " + mealPlan : "",
-      adults ? "Adults:    " + adults : "",
-      children ? "Children:  " + children : "",
-      "Check-in:  " + (checkin || "—"),
-      "Check-out: " + (checkout || "—"),
-      "Guests:    " + (guests || "—"),
+      formatPlainRows_(rows),
       "",
-      "Notes:",
-      notes || "—",
-      "",
+      notes ? "Notes\n" + notes + "\n" : "",
       "Reply directly to this email to answer the guest.",
-    ].join("\n");
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     var options = {
       to: NOTIFY_EMAIL,
       subject: subject,
       body: plainBody,
-      htmlBody: emailHtml_(receivedLabel, name, email, phone, room, rate, mealPlan, checkin, checkout, guests, notes, source, adults, children, isPopup),
+      htmlBody: emailHtml_(rows, notes, isPopup),
     };
     if (email) options.replyTo = email;
 
@@ -204,25 +218,38 @@ function doPost(e) {
 
     if (GUEST_ACK && email) {
       try {
+        var ackLines = isPopup
+          ? [
+              "Hello " + name + ",",
+              "",
+              "Thank you — your booking request has reached the Jade River Resort team.",
+              travelLabel ? "Travel date:  " + travelLabel : "",
+              "",
+              "A person from the resort will reply with availability, the room and the final rate, usually within the hour on working days. If you would like to speak now, call or message +91 95418 98820.",
+              "",
+              "Jade River Resort",
+              "Pahalgam, Jammu & Kashmir",
+              "jaderiverresort@defoy.in",
+            ]
+          : [
+              "Hello " + name + ",",
+              "",
+              "Thank you — your request for the " + room + " has reached the Jade River Resort team.",
+              checkinLabel ? "Check-in:  " + checkinLabel : "",
+              checkoutLabel ? "Check-out: " + checkoutLabel : "",
+              guests ? "Guests:    " + guests : "",
+              "",
+              "A person from the resort will reply with availability and the final rate, usually within the hour on working days. If you would like to speak now, call or message +91 95418 98820.",
+              "",
+              "Jade River Resort",
+              "Pahalgam, Jammu & Kashmir",
+              "jaderiverresort@defoy.in",
+            ];
+
         MailApp.sendEmail({
           to: email,
           subject: "We have your request — Jade River Resort",
-          body: [
-            "Hello " + name + ",",
-            "",
-            "Thank you — your request for the " + room + " has reached the Jade River Resort team.",
-            checkin ? "Check-in:  " + checkin : "",
-            checkout ? "Check-out: " + checkout : "",
-            guests ? "Guests:    " + guests : "",
-            "",
-            "A person from the resort will reply with availability and the final rate, usually within the hour on working days. If you would like to speak now, call or message +91 95418 98820.",
-            "",
-            "Jade River Resort",
-            "Pahalgam, Jammu & Kashmir",
-            "jaderiverresort@defoy.in",
-          ]
-            .filter(Boolean)
-            .join("\n"),
+          body: ackLines.filter(Boolean).join("\n"),
         });
       } catch (ackError) {
         // The team email already went out; never fail the request for this.
@@ -231,7 +258,7 @@ function doPost(e) {
     }
 
     var sheetRow = isPopup
-      ? [receivedLabel, name, phone, room, mealPlan, adults, children, checkin, checkout, guests, source, notes]
+      ? [receivedLabel, name, phone, email, checkin, source]
       : [receivedLabel, name, email, phone, room, rate, checkin, checkout, guests, source, notes];
     logToSheet_(sheetRow, isPopup);
 
@@ -254,7 +281,8 @@ function doGet() {
 // ---------------------------------------------------------------------------
 
 /**
- * Creates the log tab and header row, and returns the spreadsheet URL.
+ * Creates both log tabs ("Bookings" for the contact form, "Popup" for the
+ * homepage popup) with header rows, and returns the spreadsheet URL.
  * Safe to run repeatedly.
  */
 function setupBookingSheet() {
@@ -270,15 +298,15 @@ function setupBookingSheet() {
   return "Contact form logs to '" + TAB_CONTACT + "', Reserve popup logs to '" + TAB_POPUP + "': " + spreadsheet.getUrl();
 }
 
-/** Appends a clearly-marked sample row so you can confirm the log works. */
+/** Appends clearly-marked sample rows to both tabs. */
 function testSheetLog() {
   var stamp = "TEST — " + Utilities.formatDate(new Date(), "Asia/Kolkata", "d MMM yyyy, HH:mm 'IST'");
   var contact = logToSheet_(
-    [stamp, "Test Guest", "test@example.com", "+91 90000 00000", "Test Room", "₹1,000 / night", "2026-01-01", "2026-01-02", "2", "manual test", "Created by testSheetLog(). Delete this row."],
+    [stamp, "Test Guest", "test@example.com", "+91 90000 00000", "Test Room", "₹1,000", "2026-01-01", "2026-01-02", "2", "manual test", "Created by testSheetLog(). Delete this row."],
     false
   );
   var popup = logToSheet_(
-    [stamp, "Test Guest", "+91 90000 00000", "Test Room", "MAP", "2", "1", "2026-01-01", "2026-01-02", "2 adults · 1 child", "manual test", "Created by testSheetLog(). Delete this row."],
+    [stamp, "Test Guest", "+91 90000 00000", "test@example.com", "2026-01-01", "manual test"],
     true
   );
   return "Contact form test row: " + (contact ? "added to '" + TAB_CONTACT + "'." : "FAILED — check the execution log")
@@ -319,47 +347,78 @@ function json_(payload) {
   );
 }
 
-function emailHtml_(receivedLabel, name, email, phone, room, rate, mealPlan, checkin, checkout, guests, notes, source, adults, children, isPopup) {
-  var rows = [
-    ["Form", isPopup ? "Reserve popup (homepage)" : "Contact form (/contact)"],
-    ["Received", receivedLabel],
-    ["Name", name],
-    ["Email", email || "—"],
-    ["Phone", phone || "—"],
-    ["Room", rate ? room + " · " + rate + " / night" : room],
-    ...(mealPlan ? [["Meal plan", mealPlan]] : []),
-    ...(adults ? [["Adults", adults]] : []),
-    ...(children ? [["Children", children]] : []),
-    ["Check-in", checkin || "—"],
-    ["Check-out", checkout || "—"],
-    ["Guests", guests || "—"],
-    ["Page", source || "—"],
-  ];
+/** ISO date → "22 Nov 2026". Falls back to the raw value. */
+function dateLabel_(value) {
+  if (!value) return "";
+  var date = new Date(value + "T00:00:00");
+  if (isNaN(date.getTime())) return value;
+  return Utilities.formatDate(date, "Asia/Kolkata", "d MMM yyyy");
+}
 
+/** Aligned plain-text block, e.g. `Name          Shezan`. */
+function formatPlainRows_(rows) {
+  var width = 0;
+  rows.forEach(function (row) {
+    if (String(row[0]).length > width) width = String(row[0]).length;
+  });
+  return rows
+    .map(function (row) {
+      var label = String(row[0]) + ":";
+      while (label.length < width + 2) label += " ";
+      return label + "  " + String(row[1] == null ? "—" : row[1]);
+    })
+    .join("\n");
+}
+
+function emailHtml_(rows, notes, isPopup) {
   var table = rows
     .map(function (row) {
       return (
-        '<tr><td style="padding:6px 14px 6px 0;color:#6b6459;font:12px/1.5 Arial,sans-serif;vertical-align:top">' +
+        "<tr>" +
+        '<td style="padding:9px 20px 9px 0;border-bottom:1px solid #ece3d7;color:#8a6a4f;font:600 10px/1.5 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;vertical-align:top;white-space:nowrap">' +
         escape_(row[0]) +
-        '</td><td style="padding:6px 0;color:#1f1d1a;font:14px/1.5 Arial,sans-serif">' +
+        "</td>" +
+        '<td style="padding:9px 0;border-bottom:1px solid #ece3d7;color:#201b17;font:14px/1.6 Arial,sans-serif;vertical-align:top">' +
         escape_(row[1]) +
-        "</td></tr>"
+        "</td>" +
+        "</tr>"
       );
     })
     .join("");
 
+  var notesBlock = notes
+    ? '<p style="margin:22px 0 6px;color:#8a6a4f;font:600 10px/1.5 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase">Notes</p>' +
+      '<p style="margin:0;padding:14px 16px;background:#f5efe6;border-left:3px solid #a87850;color:#201b17;font:14px/1.7 Arial,sans-serif;white-space:pre-wrap">' +
+      escape_(notes) +
+      "</p>"
+    : "";
+
   return (
-    '<div style="max-width:620px;font-family:Arial,Helvetica,sans-serif">' +
-    '<p style="font:11px/1.6 Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#8a6a4f;margin:0 0 6px">Jade River Resort</p>' +
-    '<h1 style="font:600 26px/1.2 Georgia,serif;color:#1f1d1a;margin:0 0 18px">New booking request</h1>' +
-    '<table style="border-collapse:collapse;margin:0 0 20px">' +
+    '<div style="margin:0;padding:30px 14px;background:#f5efe6;font-family:Arial,Helvetica,sans-serif">' +
+    '<div style="max-width:640px;margin:0 auto;background:#fbf8f3;border:1px solid #e6dbcb;border-radius:10px;overflow:hidden">' +
+    '<div style="padding:24px 30px;background:#213329">' +
+    '<p style="margin:0;color:#c8d5a5;font:600 10px/1.5 Arial,sans-serif;letter-spacing:.22em;text-transform:uppercase">Jade River Resort</p>' +
+    '<h1 style="margin:7px 0 0;color:#fbf8f3;font:600 26px/1.2 Georgia,serif">New booking request</h1>' +
+    '<p style="margin:5px 0 0;color:rgba(251,248,243,.68);font:12px/1.5 Arial,sans-serif">' +
+    (isPopup ? "Reserve popup · homepage" : "Contact form · /contact") +
+    "</p>" +
+    "</div>" +
+    '<div style="height:3px;background:#a87850"></div>' +
+    '<div style="padding:26px 30px 30px">' +
+    '<table role="presentation" style="width:100%;border-collapse:collapse;margin:0">' +
     table +
     "</table>" +
-    '<p style="font:12px/1.6 Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#6b6459;margin:0 0 6px">Notes</p>' +
-    '<p style="font:15px/1.7 Arial,sans-serif;color:#1f1d1a;white-space:pre-wrap;margin:0 0 22px">' +
-    escape_(notes || "—") +
-    "</p>" +
-    '<p style="font:13px/1.6 Arial,sans-serif;color:#6b6459;margin:0">Reply to this email to answer the guest directly.</p>' +
+    notesBlock +
+    '<div style="margin-top:24px;padding:14px 16px;background:#f5efe6;border-radius:6px;color:#5f584e;font:13px/1.6 Arial,sans-serif">' +
+    (isPopup
+      ? "Reply to this email to answer the guest. The room, meal plan and dates can be confirmed in that reply."
+      : "Reply to this email to answer the guest directly.") +
+    "</div>" +
+    "</div>" +
+    '<div style="padding:14px 30px;border-top:1px solid #e6dbcb;color:#8a8176;font:11px/1.6 Arial,sans-serif">' +
+    "Sent from jaderiverresort.defoy.in · Pahalgam, Jammu &amp; Kashmir" +
+    "</div>" +
+    "</div>" +
     "</div>"
   );
 }
@@ -402,7 +461,13 @@ function logToSheet_(row, isPopup) {
 
 /** The bound spreadsheet when the script is inside a sheet, else SHEET_ID. */
 function getLogSpreadsheet_() {
-  if (SHEET_ID) return SpreadsheetApp.openById(SHEET_ID);
+  if (SHEET_ID) {
+    try {
+      return SpreadsheetApp.openById(SHEET_ID);
+    } catch (error) {
+      // Fall through to the bound spreadsheet.
+    }
+  }
   try {
     return SpreadsheetApp.getActiveSpreadsheet() || null;
   } catch (error) {

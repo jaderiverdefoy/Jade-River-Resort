@@ -44,7 +44,7 @@ export default function Philosophy({ roomsTotal = 13 }: { roomsTotal?: number })
               data-reveal
             >
               A resort built around a river,{" "}
-              <em className="text-clay">not a lobby.</em>
+              <em className="mark-sage">not a lobby.</em>
             </h2>
 
             <div className="mt-8 md:mt-12">

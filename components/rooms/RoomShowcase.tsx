@@ -40,7 +40,7 @@ export default function RoomShowcase({ rooms }: { rooms: Room[] }) {
                       <span className="bg-paper px-3 py-2 font-mono text-[9px] uppercase tracking-[0.18em]">
                         {room.count}
                       </span>
-                      <span className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/50 text-paper transition-all duration-500 group-hover:border-clay group-hover:bg-walnut-brown">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/50 text-paper transition-all duration-500 group-hover:border-clay group-hover:bg-copper">
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" className="arrow-static">
                           <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" strokeWidth="1.2" />
                         </svg>

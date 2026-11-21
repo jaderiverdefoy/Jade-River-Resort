@@ -99,7 +99,7 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
               <button
                 type="button"
                 onClick={close}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/25 transition-colors hover:border-clay hover:bg-walnut-brown"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/25 transition-colors hover:border-clay hover:bg-copper"
                 aria-label="Close gallery"
               >
                 <span className="relative block h-4 w-4">
@@ -139,7 +139,7 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
                 <button
                   type="button"
                   onClick={prev}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/25 transition-colors hover:border-clay hover:bg-walnut-brown"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/25 transition-colors hover:border-clay hover:bg-copper"
                   aria-label="Previous image"
                 >
                   <svg width="15" height="15" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -149,7 +149,7 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
                 <button
                   type="button"
                   onClick={next}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/25 transition-colors hover:border-clay hover:bg-walnut-brown"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/25 transition-colors hover:border-clay hover:bg-copper"
                   aria-label="Next image"
                 >
                   <svg width="15" height="15" viewBox="0 0 14 14" fill="none" aria-hidden="true">
