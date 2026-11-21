@@ -200,8 +200,7 @@ function doPost(e) {
       "",
       formatPlainRows_(rows),
       "",
-      notes ? "Notes\n" + notes + "\n" : "",
-      "Reply directly to this email to answer the guest.",
+      notes ? "Notes\n" + notes + "\n" : ""
     ]
       .filter(Boolean)
       .join("\n");
@@ -409,11 +408,6 @@ function emailHtml_(rows, notes, isPopup) {
     table +
     "</table>" +
     notesBlock +
-    '<div style="margin-top:24px;padding:14px 16px;background:#f5efe6;border-radius:6px;color:#5f584e;font:13px/1.6 Arial,sans-serif">' +
-    (isPopup
-      ? "Reply to this email to answer the guest. The room, meal plan and dates can be confirmed in that reply."
-      : "Reply to this email to answer the guest directly.") +
-    "</div>" +
     "</div>" +
     '<div style="padding:14px 30px;border-top:1px solid #e6dbcb;color:#8a8176;font:11px/1.6 Arial,sans-serif">' +
     "Sent from jaderiverresort.defoy.in · Pahalgam, Jammu &amp; Kashmir" +
